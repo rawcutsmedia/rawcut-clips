@@ -1,0 +1,28 @@
+{
+  "_how_to_use": "Each clip in queue/ must name a campaign key from this file (in its .json sidecar, field 'campaign'). Clips with no valid, active campaign are NOT posted. Add one entry per Whop/Vyro campaign you join. 'organic' is only for content you own or have explicit permission to post.",
+  "campaigns": {
+    "organic": {
+      "active": true,
+      "name": "Organic (no paid campaign)",
+      "paid": false,
+      "platforms": ["tiktok", "youtube", "instagram"],
+      "required_text": [],
+      "voiceover_allowed": true,
+      "notes": "Only for content you own or have explicit permission to post. No #ad."
+    },
+    "example-whop-campaign": {
+      "active": false,
+      "name": "Example: Whop campaign name",
+      "paid": true,
+      "submit_where": "Whop Content Rewards dashboard",
+      "rate_per_1k": 1.0,
+      "platforms": ["tiktok", "youtube", "instagram"],
+      "required_text": ["#ad"],
+      "required_mentions": [],
+      "min_seconds": 8,
+      "max_seconds": 59,
+      "voiceover_allowed": false,
+      "notes": "Copy the campaign's rules here (required sound, tags, banned edits). Set active to true once you've joined."
+    }
+  }
+}

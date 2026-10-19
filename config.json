@@ -1,0 +1,30 @@
+{
+  "timezone": "America/New_York",
+  "test_mode": true,
+  "buffer": {
+    "organization_id": "6ad639a2de0f08ea4b18d4a9",
+    "channels": {
+      "tiktok": "6ad639df778b240e2f5a180e",
+      "youtube": "6ad639f6778b240e2f5a18c0",
+      "instagram": null
+    },
+    "max_scheduled_per_channel": 9
+  },
+  "clips_per_day": 2,
+  "slots": {
+    "tiktok": ["12:30", "19:30"],
+    "youtube": ["13:00", "20:00"],
+    "instagram": ["12:45", "19:45"]
+  },
+  "youtube_category_id": "24",
+  "max_clip_seconds": 59,
+  "max_file_mb": 95,
+  "raw_base_url": "https://raw.githubusercontent.com/rawcutsmedia/rawcut-clips/main/",
+  "voiceover": {
+    "enabled": false,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Puck",
+    "style": "energetic, confident short-form video narrator, fast pace",
+    "duck_volume": 0.22
+  }
+}
