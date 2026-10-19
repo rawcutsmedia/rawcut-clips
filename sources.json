@@ -142,8 +142,29 @@
    "label": "Boxabl Casita Tour (1.6M views)",
    "url": "https://youtu.be/JbS_VhA0rRo",
    "priority": 2,
-   "status": "new",
-   "used_ranges": [],
+   "status": "in_progress",
+   "used_ranges": [
+    [
+     22.6,
+     54.4
+    ],
+    [
+     143.8,
+     170.7
+    ],
+    [
+     182.5,
+     215.6
+    ],
+    [
+     256.6,
+     286.3
+    ],
+    [
+     299.1,
+     325.6
+    ]
+   ],
    "pc_file": "Videos/Boxabl/JbS_VhA0rRo.mp4"
   },
   {

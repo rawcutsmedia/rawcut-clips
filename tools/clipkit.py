@@ -554,7 +554,7 @@ def chunk_words(words, max_words=3, max_chars=15):
 
 
 def clean_word(w):
-    w = re.sub(r"[^\w'?!%$&-]", "", w["w"].upper())
+    w = re.sub(r"[^\w'?!%$&/-]", "", w["w"].upper())
     return ass_escape(w)
 
 
