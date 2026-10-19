@@ -5,10 +5,11 @@ once it's connected. Two scheduled Claude runs do the work:
 
 | When (New York time) | Job | What it does |
 |---|---|---|
-| ~8:47 AM daily | Morning job | Takes the next **5** clips from `queue/`, writes a different caption per platform (with #ad for paid campaigns), optionally adds an AI voiceover hook, and schedules them in Buffer |
+| ~6:07 AM daily | Morning job | Takes the next **5** clips from `queue/`, writes a different caption per platform (with #ad for paid campaigns), optionally adds an AI voiceover hook, and schedules them in Buffer |
 | ~10:47 PM daily | Evening job | Checks which posts went live, emails you the links to submit to Whop/Vyro (plus problems and clips left), and deletes videos that have finished posting |
 
-**Posting times (New York):** TikTok 10:00, 1:00, 4:00, 7:00, 9:30 · YouTube 10:30, 1:30, 4:30, 7:30, 10:00.
+**Posting times (New York):** TikTok 7:00 AM, 1:00 PM, 6:00 PM, 8:30 PM, 10:00 PM · YouTube 7:30 AM, 12:30 PM, 4:30 PM, 7:30 PM, 9:30 PM.
+Chosen from Buffer's 2026 data: evenings (6–11 PM) perform best on both apps, plus the morning scroll, lunch, and YouTube Shorts' strong 4 PM slot.
 Each clip goes to both accounts, so you need **5 clips a day (35 a week)** in `queue/`.
 
 The full rules Claude follows are in [`CLAUDE.md`](CLAUDE.md).
