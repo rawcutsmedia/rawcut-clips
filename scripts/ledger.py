@@ -44,8 +44,11 @@ def main():
     u.add_argument("--status")
     u.add_argument("--link")
     u.add_argument("--error")
+    u.add_argument("--views", type=int)
     sub.add_parser("pending")
     sub.add_parser("summary")
+    s = sub.add_parser("stats", help="views + estimated earnings for recent sent posts")
+    s.add_argument("--days", type=int, default=7)
     a = ap.parse_args()
 
     cfg = load_config()
@@ -66,10 +69,12 @@ def main():
         for r in rows:
             if r.get("post_id") == a.post_id:
                 hit = True
-                for k in ("status", "link", "error"):
+                for k in ("status", "link", "error", "views"):
                     v = getattr(a, k)
                     if v is not None:
                         r[k] = v
+                if a.views is not None:
+                    r["views_at"] = now.isoformat(timespec="seconds")
                 r["checked_at"] = now.isoformat(timespec="seconds")
         write(rows)
         print("updated" if hit else "post id not found")
@@ -85,6 +90,34 @@ def main():
         per_day = max(1, int(cfg.get("clips_per_day", 2)))
         print(json.dumps({"queue_clips": len(queue), "queue_days_left": round(len(queue) / per_day, 1),
                           "post_status_counts": counts}, indent=2))
+    elif a.cmd == "stats":
+        camps = json.loads((ROOT / "campaigns.json").read_text(encoding="utf-8"))["campaigns"]
+        recent = [r for r in rows if r.get("status") == "sent" and r.get("due_at")
+                  and (now - datetime.fromisoformat(r["due_at"])).days < a.days]
+
+        def earn(r):  # campaign pay rule: rate per 1k views, per-post minimum and cap
+            c = camps.get(r.get("campaign"), {})
+            if not c.get("paid") or not r.get("views"):
+                return 0.0
+            usd = r["views"] / 1000 * c.get("rate_per_1k", 0)
+            if usd < c.get("min_payout_per_post", 0):
+                return 0.0
+            return min(usd, c.get("max_payout_per_post", usd))
+
+        for r in recent:
+            r["est_usd"] = round(earn(r), 2)
+            r["when"] = datetime.fromisoformat(r["due_at"]).strftime("%a %I:%M %p")
+        measured = [r for r in recent if r.get("views") is not None]
+        ranked = sorted(measured, key=lambda r: r["views"], reverse=True)
+        keep = ("platform", "title", "views", "est_usd", "when", "link")
+        print(json.dumps({
+            "days": a.days, "posts_sent": len(recent), "posts_measured": len(measured),
+            "total_views": sum(r["views"] for r in measured),
+            "est_earnings_usd": round(sum(r["est_usd"] for r in recent), 2),
+            "posts_over_min_payout": sum(1 for r in recent if r["est_usd"] > 0),
+            "top": [{k: r.get(k) for k in keep} for r in ranked[:5]],
+            "bottom": [{k: r.get(k) for k in keep} for r in ranked[-5:]] if len(ranked) > 5 else [],
+        }, indent=2))
 
 
 if __name__ == "__main__":

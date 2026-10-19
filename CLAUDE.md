@@ -58,6 +58,7 @@ safe choice, and report what you did in the final message and the email.
     many clips are left in `queue/` (`python scripts/ledger.py summary`).
 
 ### Caption rules
+- If `insights.md` exists, read it first and apply its lessons about hooks, titles and topics.
 - Line 1 is the hook: curiosity or stakes, never a lie, never the punchline. Different wording on
   each platform; never paste the same caption twice.
 - Use the clip's `title`, `transcript` and `source_title` for context. Credit the source when known
@@ -141,7 +142,8 @@ YouTube blocks cloud downloads, so approved footage was downloaded once onto the
    `python tools/pc_batch.py transcript <source id> <staged path>` and read the transcript. If it
    reads like a machine translation (the speaker isn't speaking English), run
    `python tools/pc_batch.py status <id> done "not English"` and move on.
-5. Pick moments using `tools/PICK_MOMENTS_PROMPT.txt` and the campaign's `clip_rules`:
+5. Pick moments using `tools/PICK_MOMENTS_PROMPT.txt`, the campaign's `clip_rules`, and `insights.md`
+   if it exists. `insights.md` is what has actually been getting views, so lean into it:
    - Each clip is 20–55 s, starts on the hook, and ends on a payoff.
    - Content is positive. Leave out anything within 10 s of the source's `used_ranges`, stock or
      investing talk, sponsor reads, and "like and subscribe" bait.
@@ -180,7 +182,13 @@ On the PC, only write inside `Videos/Boxabl/rawcut-pieces`, and never delete any
    `python scripts/ledger.py update --post-id <id> --status <sent|error> [--link <url>] [--error "..."]`.
    Use the post's public link if the response has one (fields such as `externalLink`/`serviceLink`).
    Otherwise use the channel's profile URL and say the exact link needs copying from the app.
-4. `python scripts/ledger.py summary`, and `list_posts` with status `scheduled` for tomorrow.
+4. Views: make one Buffer `execute_query` call for the posts sent in the last 7 days:
+   `query { posts(first: 100, input: {organizationId: "6ad639a2de0f08ea4b18d4a9", filter: {status: [sent],
+   dueAt: {start: "<7 days ago, ISO>", end: "<now, ISO>"}}}) { edges { node { id metrics { type value } } } } }`.
+   For each post that's in the ledger, run `python scripts/ledger.py update --post-id <id> --views <n>`. Use
+   the `views` metric, or `impressions` if there's no `views`. Skip posts with no metrics yet.
+   Then run `python scripts/ledger.py stats` and `python scripts/ledger.py summary`, and call
+   `list_posts` with status `scheduled` for tomorrow.
 5. Send **one** plain-text email with the Gmail connector to the recipient named in the run prompt:
    - Subject: `Rawcut daily: <n> live, <n> to submit` (add `[TEST MODE]` when test_mode is true)
    - **PC reminder (Monday, Wednesday and Friday emails only)**: append ` · PC on tomorrow 7:57 PM`
@@ -189,6 +197,8 @@ On the PC, only write inside `Videos/Boxabl/rawcut-pieces`, and never delete any
      the Claude desktop app open for about 30 minutes."
    - **Submit these links**: grouped by campaign → platform, link, title, posted time
      (skip `organic`; nothing to submit).
+   - **Views (last 7 days)**: total views, posts over the minimum payout, estimated earnings (say it's
+     an estimate; the campaign decides the final pay), and the top 3 posts with their views.
    - **Problems**: failed posts with Buffer's error; clips waiting for a campaign.
    - **Queue**: clips left and roughly how many days that covers. If fewer than 2 days are left,
      say so, and mention any `sources.json` entries marked `blocked` (the clip factory couldn't
@@ -196,7 +206,14 @@ On the PC, only write inside `Videos/Boxabl/rawcut-pieces`, and never delete any
    - **Tomorrow**: scheduled posts.
 6. Cleanup: `python scripts/cleanup.py` deletes videos whose posts all finished more than
    `cleanup_after_days` ago (Buffer has already uploaded them to the platforms).
-   **On Sundays only**, also squash git history so deleted videos stop taking up space:
+   **On Sundays only**, first update `insights.md` from `python scripts/ledger.py stats --days 14`. Keep it
+   to 15 lines or fewer:
+   - which kinds of moments, hook titles, sources and posting times got the most views and which got
+     the fewest;
+   - then 3–5 concrete rules for the next week, e.g. "more price/durability moments", "titles that ask
+     a question beat statements", "TikTok 6 PM beats 1 PM".
+   Only state what the numbers show, and once there are at least 20 measured posts. Then squash git
+   history so deleted videos stop taking up space:
    `git add -A && git commit -m "Evening <date>" ; git checkout --orphan squash && git add -A &&
    git commit -m "Squash history <date>" && git push --force origin squash:main`.
    On other days just commit and push to `main`.
