@@ -5,7 +5,11 @@
       "active": true,
       "name": "Organic (no paid campaign)",
       "paid": false,
-      "platforms": ["tiktok", "youtube", "instagram"],
+      "platforms": [
+        "tiktok",
+        "youtube",
+        "instagram"
+      ],
       "required_text": [],
       "voiceover_allowed": true,
       "notes": "Only for content you own or have explicit permission to post. No #ad."
@@ -16,13 +20,61 @@
       "paid": true,
       "submit_where": "Whop Content Rewards dashboard",
       "rate_per_1k": 1.0,
-      "platforms": ["tiktok", "youtube", "instagram"],
-      "required_text": ["#ad"],
+      "platforms": [
+        "tiktok",
+        "youtube",
+        "instagram"
+      ],
+      "required_text": [
+        "#ad"
+      ],
       "required_mentions": [],
       "min_seconds": 8,
       "max_seconds": 59,
       "voiceover_allowed": false,
       "notes": "Copy the campaign's rules here (required sound, tags, banned edits). Set active to true once you've joined."
+    },
+    "boxabl": {
+      "active": true,
+      "name": "Boxabl Official Clipping (Clip Farm, Whop Content Rewards)",
+      "paid": true,
+      "submit_where": "contentrewards.com -> Boxabl Official Clipping -> Submit clip",
+      "rate_per_1k": 0.5,
+      "min_payout_per_post": 1.0,
+      "max_payout_per_post": 500.0,
+      "platforms": [
+        "tiktok",
+        "youtube",
+        "instagram"
+      ],
+      "required_text": [
+        "#ad"
+      ],
+      "required_mentions": [
+        "@boxabl"
+      ],
+      "min_seconds": 12,
+      "max_seconds": 59,
+      "voiceover_allowed": true,
+      "caption_rules": [
+        "Tag @boxabl in every caption (TikTok, Instagram, YouTube).",
+        "Caption must be about Boxabl: the Casita, foldable homes, or the factory.",
+        "Spell the brand BOXABL correctly (all caps is fine).",
+        "Positive tone toward Boxabl, its product and featured talent.",
+        "Never mention Boxabl stock, shares, investing in Boxabl, or any ticker symbol.",
+        "No engagement bait, no politics or controversy."
+      ],
+      "clip_rules": [
+        "Only Boxabl-approved footage (sources.json). Never use clips of Kanye.",
+        "Show the whole Boxabl home at some point, not only close-up details.",
+        "Brand must be clear: the on-screen hook title must contain the word BOXABL (or Boxabl must be said in the clip).",
+        "Hook in the first 2 seconds; bold captions for muted viewing (ClipKit adds these).",
+        "Real edits only (captions, cuts, hooks) - never a raw rip. Vary moments; never repeat the same moment.",
+        "Positive moments only: the unfolding, the space, the price/value wow, the factory scale, celebrity reactions.",
+        "No other brands' watermarks; avoid moments dominated by another brand's logo or sponsor read."
+      ],
+      "payment_notes": "Pays only if at least 40% of the clip's audience is US/UK/CA/AUS. 'Share audience demographics' is required when submitting. Up to $500 per clip.",
+      "notes": "Optional: Boxabl affiliate program at boxabl.com/affiliate."
     }
   }
 }

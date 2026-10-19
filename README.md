@@ -5,6 +5,7 @@ once it's connected. Two scheduled Claude runs do the work:
 
 | When (New York time) | Job | What it does |
 |---|---|---|
+| ~3:07 AM daily | Clip factory | Keeps 3 days of clips in `queue/`. It downloads approved campaign footage from [`sources.json`](sources.json), picks the best moments, and cuts captioned 9:16 clips that follow each campaign's rules |
 | ~6:07 AM daily | Morning job | Takes the next **5** clips from `queue/`, writes a different caption per platform (with #ad for paid campaigns), optionally adds an AI voiceover hook, and schedules them in Buffer |
 | ~10:47 PM daily | Evening job | Checks which posts went live, emails you the links to submit to Whop/Vyro (plus problems and clips left), and deletes videos that have finished posting |
 
@@ -14,7 +15,10 @@ Each clip goes to both accounts, so you need **5 clips a day (35 a week)** in `q
 
 The full rules Claude follows are in [`CLAUDE.md`](CLAUDE.md).
 
-## Your daily part (~10 minutes)
+## Your daily part (~5 minutes)
+The clip factory makes the clips. Your only daily job is step 3 below (pasting links). Steps 1–2
+are for when you want to add your own clips by hand.
+
 1. **Make clips** with ClipKit on your PC: `py clipkit.py cut NAME --campaign <campaign-key>`.
    Each clip comes out as an `.mp4` plus a matching `.json` (title, transcript, campaign).
 2. **Upload both files to `queue/`**: open this repo on github.com → `queue` folder →

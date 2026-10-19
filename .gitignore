@@ -1,0 +1,5 @@
+# never commit downloads or work files
+work/
+*.part
+*.ytdl
+__pycache__/

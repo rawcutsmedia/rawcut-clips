@@ -64,10 +64,52 @@ safe choice, and report what you did in the final message and the email.
   (for example "🎙️ via <show or creator>").
 - Paid campaigns (`paid: true`) must include **#ad** and every item in `required_text` and
   `required_mentions`, word for word.
+- Follow every item in the campaign's `caption_rules` (for example Boxabl: tag @boxabl, spell
+  BOXABL right, never mention stock or a ticker).
 - 3–5 relevant lowercase hashtags. At most 2 emojis. No engagement bait ("comment YES").
 - TikTok caption: under 150 characters before the hashtags.
 - YouTube title: 90 characters max, ending in ` #Shorts`. Description: 1–2 lines, then hashtags,
   plus `#ad` if paid.
+
+## Clip factory job (keep the queue stocked)
+Goal: keep at least `factory.min_queue_days` × `clips_per_day` clips in `queue/` (3 × 5 = 15),
+cut from the approved footage in `sources.json`.
+1. `git pull --rebase origin main`, then `python scripts/ledger.py summary`. If `queue_clips` is
+   already at the target, stop and say "Queue is full".
+2. Set up (every run):
+   `pip install -q "yt-dlp[default,deno]" faster-whisper imageio-ffmpeg numpy` and
+   `export CLIPKIT_WORK=$HOME/rawcut-work`. Downloads and work files live there, **outside the
+   repo**. Never commit anything from it.
+3. Pick a source from `sources.json`: its campaign must be `active`, its `status` not `done` or
+   `blocked`. Take the lowest `priority` number first, then the one with the fewest `used_ranges`.
+4. Download: `python tools/clipkit.py fetch "<url>" --name <source id>`. If it fails (for example
+   YouTube "confirm you're not a bot", HTTP 403/429), retry once. If it still fails, set the
+   source's `status` to `"blocked"` with an `"error"` note and move on to the next source.
+5. Transcript: `python tools/clipkit.py transcript <source id> --model base.en`, then read
+   `$CLIPKIT_WORK/projects/<source id>/transcript.txt`.
+6. Pick moments (needed = target − queue, at most `max_clips_per_run` per run) using the rules in
+   `tools/PICK_MOMENTS_PROMPT.txt` **and** the campaign's `clip_rules`. Skip anything within 10
+   seconds of a range in the source's `used_ranges`. Each clip should run 20–55 seconds. The hook
+   title is 8 words or fewer, and for Boxabl it **must contain the word BOXABL**. Write the JSON
+   array to `$CLIPKIT_WORK/projects/<source id>/clips.json`.
+7. Render straight into the queue:
+   `python tools/clipkit.py cut <source id> --campaign <campaign key> --outdir queue
+   --font fonts/Anton-Regular.ttf --font-name Anton --layout <layout>`.
+   Use `--layout blur` for tours and wide shots, where the whole home or product has to stay
+   visible. Use `--layout crop` for one person talking to the camera. If a source mixes both, render
+   in two passes with `--only`.
+8. Quality check: for each new clip, grab a frame
+   (`python -c "import imageio_ffmpeg,subprocess,sys;subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),'-v','error','-ss','2','-i',sys.argv[1],'-frames:v','1','-y',sys.argv[2]])" <clip> /tmp/check.png`)
+   and look at it. Delete the clip and its `.json` if it's black, cuts off the main subject, has
+   unreadable text, or breaks a campaign rule.
+9. Add each kept clip's `[start, end]` (seconds) to the source's `used_ranges` in `sources.json`.
+   If fewer than 3 good unused moments remain in that source, set its `status` to `"done"`.
+10. `git add queue sources.json && git commit -m "Factory: <n> clips from <source id>" &&
+    git push origin HEAD:main`.
+11. If the queue is still below target, repeat from step 3 with another source, up to
+    `max_sources_per_run` sources.
+12. Final message: clips added (title, length, source), sources marked done or blocked, and the
+    queue total.
 
 ## Evening job (report links to submit)
 1. `git pull --rebase origin main`.
@@ -83,7 +125,8 @@ safe choice, and report what you did in the final message and the email.
      (skip `organic`; nothing to submit).
    - **Problems**: failed posts with Buffer's error; clips waiting for a campaign.
    - **Queue**: clips left and roughly how many days that covers. If fewer than 2 days are left,
-     say "Add more clips to queue/".
+     say so, and mention any `sources.json` entries marked `blocked` (the clip factory couldn't
+     download them).
    - **Tomorrow**: scheduled posts.
 6. Cleanup: `python scripts/cleanup.py` deletes videos whose posts all finished more than
    `cleanup_after_days` ago (Buffer has already uploaded them to the platforms).
@@ -94,6 +137,8 @@ safe choice, and report what you did in the final message and the email.
 
 ## Never
 - Never post a clip that isn't in `queue/` or has no active campaign.
-- Never delete or move anything in `media/` (scheduled posts depend on those links).
+- Never delete or move anything in `media/` except through `scripts/cleanup.py` (scheduled posts
+  depend on those links).
+- Never commit downloaded source videos or anything from `$CLIPKIT_WORK`.
 - Never put API keys, emails or tokens in this repo. It's public.
 - Never retry a failed Buffer call more than once. Log it and move on.
