@@ -656,7 +656,10 @@ def snap_to_words(words_abs, s, e):
     if inside:
         # prefer ending on a sentence end within the last ~3 seconds
         enders = [w for w in inside if re.search(r"[.?!]$", w["w"]) and w["e"] >= e - 3]
-        e = (enders[-1]["e"] if enders else inside[-1]["e"]) + 0.3
+        last = enders[-1] if enders else inside[-1]
+        nxt = [w for w in words_abs if w["s"] > last["s"] + 0.01]
+        gap = (nxt[0]["s"] - last["e"]) if nxt else 1.0
+        e = last["e"] + max(0.08, min(0.3, gap - 0.02))  # don't run into the next word
     return s, e
 
 
@@ -729,7 +732,8 @@ def cmd_cut(a):
                 e = (fits[-1]["e"] + 0.3) if fits else s + a.max_len
                 print(f"  trimmed to {a.max_len:.0f}s (YouTube Shorts limit)")
             words = [{"w": w["w"], "s": w["s"] - s, "e": w["e"] - s}
-                     for w in wabs if w["s"] >= s - 0.05 and w["e"] <= e + 0.05]
+                     for w in wabs if w["s"] >= s - 0.05 and w["e"] <= e + 0.05
+                     and w["s"] < e - 0.12]
         if a.no_captions and e - s > a.max_len:
             e = s + a.max_len
             print(f"  trimmed to {a.max_len:.0f}s (YouTube Shorts limit)")
