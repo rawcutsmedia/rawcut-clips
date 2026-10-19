@@ -10,11 +10,29 @@
     },
     "max_scheduled_per_channel": 9
   },
-  "clips_per_day": 2,
+  "clips_per_day": 5,
   "slots": {
-    "tiktok": ["12:30", "19:30"],
-    "youtube": ["13:00", "20:00"],
-    "instagram": ["12:45", "19:45"]
+    "tiktok": [
+      "10:00",
+      "13:00",
+      "16:00",
+      "19:00",
+      "21:30"
+    ],
+    "youtube": [
+      "10:30",
+      "13:30",
+      "16:30",
+      "19:30",
+      "22:00"
+    ],
+    "instagram": [
+      "10:15",
+      "13:15",
+      "16:15",
+      "19:15",
+      "21:45"
+    ]
   },
   "youtube_category_id": "24",
   "max_clip_seconds": 59,
@@ -26,5 +44,6 @@
     "voice": "Puck",
     "style": "energetic, confident short-form video narrator, fast pace",
     "duck_volume": 0.22
-  }
+  },
+  "cleanup_after_days": 2
 }

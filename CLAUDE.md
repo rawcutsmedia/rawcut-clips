@@ -22,7 +22,8 @@ safe choice, and report what you did in the final message and the email.
 1. `git pull --rebase origin main`.
 2. Read `config.json` and `campaigns.json`.
 3. List `queue/*.mp4`, oldest first (by filename). If there are none, stop and say so.
-4. Work out which clips are allowed, up to `clips_per_day`:
+4. Work out which clips are allowed, up to `clips_per_day` (currently 5, so one clip per slot;
+   every clip goes to every connected platform):
    - The clip's sidecar `queue/<same name>.json` names a `campaign`. If the sidecar or the campaign
      is missing, or the campaign isn't `active`, **don't post it**. Leave it in the queue and list it
      as "needs a campaign" in your summary.
@@ -84,7 +85,12 @@ safe choice, and report what you did in the final message and the email.
    - **Queue**: clips left and roughly how many days that covers. If fewer than 2 days are left,
      say "Add more clips to queue/".
    - **Tomorrow**: scheduled posts.
-6. Commit and push the ledger to `main`.
+6. Cleanup: `python scripts/cleanup.py` deletes videos whose posts all finished more than
+   `cleanup_after_days` ago (Buffer has already uploaded them to the platforms).
+   **On Sundays only**, also squash git history so deleted videos stop taking up space:
+   `git add -A && git commit -m "Evening <date>" ; git checkout --orphan squash && git add -A &&
+   git commit -m "Squash history <date>" && git push --force origin squash:main`.
+   On other days just commit and push to `main`.
 
 ## Never
 - Never post a clip that isn't in `queue/` or has no active campaign.

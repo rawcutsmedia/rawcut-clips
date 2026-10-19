@@ -5,8 +5,11 @@ once it's connected. Two scheduled Claude runs do the work:
 
 | When (New York time) | Job | What it does |
 |---|---|---|
-| ~8:47 AM daily | Morning job | Takes the next clips from `queue/`, writes a different caption per platform (with #ad for paid campaigns), optionally adds an AI voiceover hook, and schedules the posts in Buffer for 12:30–1 PM and 7:30–8 PM |
-| ~9:37 PM daily | Evening job | Checks which posts went live and emails you the links to submit to Whop/Vyro, plus any problems and how many clips are left |
+| ~8:47 AM daily | Morning job | Takes the next **5** clips from `queue/`, writes a different caption per platform (with #ad for paid campaigns), optionally adds an AI voiceover hook, and schedules them in Buffer |
+| ~10:47 PM daily | Evening job | Checks which posts went live, emails you the links to submit to Whop/Vyro (plus problems and clips left), and deletes videos that have finished posting |
+
+**Posting times (New York):** TikTok 10:00, 1:00, 4:00, 7:00, 9:30 · YouTube 10:30, 1:30, 4:30, 7:30, 10:00.
+Each clip goes to both accounts, so you need **5 clips a day (35 a week)** in `queue/`.
 
 The full rules Claude follows are in [`CLAUDE.md`](CLAUDE.md).
 
@@ -34,5 +37,5 @@ the campaign's rules to Claude and ask it to add the entry.
 
 ## Housekeeping
 - This repo is **public** so Buffer can download the videos. Don't put anything private in it.
-- GitHub likes repos under ~1 GB. About once a month, start a fresh repo or ask Claude to clean up
-  `media/` folders whose posts have all gone out.
+- GitHub likes repos under ~1 GB. The evening job deletes videos 2 days after they've posted and
+  compresses the repo's history every Sunday, so it stays small on its own.
