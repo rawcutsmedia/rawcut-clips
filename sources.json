@@ -1,20 +1,143 @@
 {
-  "_how_to_use": "Approved footage the clip factory cuts from. One entry per source video. The factory picks the highest-priority source that still has unused moments, records which time ranges it used (so moments are never repeated), and marks a source 'done' once its good moments are used up. To add footage for a new campaign, add entries with that campaign's key.",
-  "sources": [
-    {"id": "boxabl-enes", "campaign": "boxabl", "label": "Enes Yilmazer tour (15M views)", "url": "https://youtu.be/8JMrfSFQdpo", "priority": 1, "status": "new", "used_ranges": []},
-    {"id": "boxabl-orkun", "campaign": "boxabl", "label": "Orkun Isitmak (6.3M views)", "url": "https://youtu.be/eS-fnedN2yI", "priority": 1, "status": "new", "used_ranges": []},
-    {"id": "boxabl-fazerug", "campaign": "boxabl", "label": "Faze Rug (4.7M views)", "url": "https://youtu.be/uu5aORByttg", "priority": 1, "status": "new", "used_ranges": []},
-    {"id": "boxabl-graham", "campaign": "boxabl", "label": "Graham Stephan (3M views)", "url": "https://youtu.be/0Cdqs2Q1Vis", "priority": 1, "status": "new", "used_ranges": []},
-    {"id": "boxabl-airrack", "campaign": "boxabl", "label": "Airrack (2.3M views)", "url": "https://youtu.be/7rX5cPQrx_s", "priority": 1, "status": "new", "used_ranges": []},
-    {"id": "boxabl-elon", "campaign": "boxabl", "label": "Elon Musk (Google Drive file)", "url": "https://drive.google.com/file/d/1OnH2B5N-TaGyHqPdmT0uxdCeA-38FXry/view", "priority": 1, "status": "new", "used_ranges": []},
-    {"id": "boxabl-casita-tour", "campaign": "boxabl", "label": "Boxabl Casita Tour (1.6M views)", "url": "https://youtu.be/JbS_VhA0rRo", "priority": 2, "status": "new", "used_ranges": []},
-    {"id": "boxabl-808", "campaign": "boxabl", "label": "808 (1.7M views)", "url": "https://youtu.be/5Lo54Lx7MCU", "priority": 2, "status": "new", "used_ranges": []},
-    {"id": "boxabl-ellie", "campaign": "boxabl", "label": "Ellie in Space (1.3M views)", "url": "https://youtu.be/KrahQlLAz44", "priority": 2, "status": "new", "used_ranges": []},
-    {"id": "boxabl-irina", "campaign": "boxabl", "label": "Irina Dee (904K views)", "url": "https://youtu.be/3plLxp_7Jlo", "priority": 2, "status": "new", "used_ranges": []},
-    {"id": "boxabl-nyse", "campaign": "boxabl", "label": "NYSE interview", "url": "https://youtu.be/Cz9cwL_fqTI", "priority": 3, "status": "new", "used_ranges": []},
-    {"id": "boxabl-factory-1", "campaign": "boxabl", "label": "Factory update series #1", "url": "https://youtu.be/IBV7eIH3Bdw", "priority": 3, "status": "new", "used_ranges": []},
-    {"id": "boxabl-factory-2", "campaign": "boxabl", "label": "Factory update series #2", "url": "https://youtu.be/b9erzF6LHKI", "priority": 3, "status": "new", "used_ranges": []},
-    {"id": "boxabl-factory-3", "campaign": "boxabl", "label": "Factory update series #3", "url": "https://youtu.be/9ThVUNGj3To", "priority": 3, "status": "new", "used_ranges": []},
-    {"id": "boxabl-factory-4", "campaign": "boxabl", "label": "Factory update series #4", "url": "https://youtu.be/rUArr8SWyf8", "priority": 3, "status": "new", "used_ranges": []}
-  ]
+ "_how_to_use": "Approved footage the clip factory cuts from. One entry per source video. The factory picks the highest-priority source that still has unused moments, records which time ranges it used (so moments are never repeated), and marks a source 'done' once its good moments are used up. To add footage for a new campaign, add entries with that campaign's key.",
+ "sources": [
+  {
+   "id": "boxabl-enes",
+   "campaign": "boxabl",
+   "label": "Enes Yilmazer tour (15M views)",
+   "url": "https://youtu.be/8JMrfSFQdpo",
+   "priority": 1,
+   "status": "blocked",
+   "used_ranges": [],
+   "error": "YouTube bot check / HTTP 429 from cloud IP on 2026-10-19 (failed after retry)"
+  },
+  {
+   "id": "boxabl-orkun",
+   "campaign": "boxabl",
+   "label": "Orkun Isitmak (6.3M views)",
+   "url": "https://youtu.be/eS-fnedN2yI",
+   "priority": 1,
+   "status": "blocked",
+   "used_ranges": [],
+   "error": "YouTube bot check / HTTP 429 from cloud IP on 2026-10-19 (failed after retry)"
+  },
+  {
+   "id": "boxabl-fazerug",
+   "campaign": "boxabl",
+   "label": "Faze Rug (4.7M views)",
+   "url": "https://youtu.be/uu5aORByttg",
+   "priority": 1,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-graham",
+   "campaign": "boxabl",
+   "label": "Graham Stephan (3M views)",
+   "url": "https://youtu.be/0Cdqs2Q1Vis",
+   "priority": 1,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-airrack",
+   "campaign": "boxabl",
+   "label": "Airrack (2.3M views)",
+   "url": "https://youtu.be/7rX5cPQrx_s",
+   "priority": 1,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-elon",
+   "campaign": "boxabl",
+   "label": "Elon Musk (Google Drive file)",
+   "url": "https://drive.google.com/file/d/1OnH2B5N-TaGyHqPdmT0uxdCeA-38FXry/view",
+   "priority": 1,
+   "status": "done",
+   "used_ranges": [],
+   "error": "Only 200s of podcast footage; no Boxabl home on screen and Happy Dad branding visible, so it breaks clip_rules. Nothing cut."
+  },
+  {
+   "id": "boxabl-casita-tour",
+   "campaign": "boxabl",
+   "label": "Boxabl Casita Tour (1.6M views)",
+   "url": "https://youtu.be/JbS_VhA0rRo",
+   "priority": 2,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-808",
+   "campaign": "boxabl",
+   "label": "808 (1.7M views)",
+   "url": "https://youtu.be/5Lo54Lx7MCU",
+   "priority": 2,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-ellie",
+   "campaign": "boxabl",
+   "label": "Ellie in Space (1.3M views)",
+   "url": "https://youtu.be/KrahQlLAz44",
+   "priority": 2,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-irina",
+   "campaign": "boxabl",
+   "label": "Irina Dee (904K views)",
+   "url": "https://youtu.be/3plLxp_7Jlo",
+   "priority": 2,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-nyse",
+   "campaign": "boxabl",
+   "label": "NYSE interview",
+   "url": "https://youtu.be/Cz9cwL_fqTI",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-factory-1",
+   "campaign": "boxabl",
+   "label": "Factory update series #1",
+   "url": "https://youtu.be/IBV7eIH3Bdw",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-factory-2",
+   "campaign": "boxabl",
+   "label": "Factory update series #2",
+   "url": "https://youtu.be/b9erzF6LHKI",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-factory-3",
+   "campaign": "boxabl",
+   "label": "Factory update series #3",
+   "url": "https://youtu.be/9ThVUNGj3To",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
+   "id": "boxabl-factory-4",
+   "campaign": "boxabl",
+   "label": "Factory update series #4",
+   "url": "https://youtu.be/rUArr8SWyf8",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": []
+  }
+ ]
 }
