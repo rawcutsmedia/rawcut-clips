@@ -1,6 +1,6 @@
 {
   "timezone": "America/New_York",
-  "test_mode": true,
+  "test_mode": false,
   "buffer": {
     "organization_id": "6ad639a2de0f08ea4b18d4a9",
     "channels": {
