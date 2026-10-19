@@ -2,6 +2,16 @@
  "_how_to_use": "Approved footage the clip factory cuts from. One entry per source video. The factory picks the highest-priority source that still has unused moments, records which time ranges it used (so moments are never repeated), and marks a source 'done' once its good moments are used up. To add footage for a new campaign, add entries with that campaign's key.",
  "sources": [
   {
+   "id": "boxabl-drive-folder",
+   "type": "drive_folder",
+   "campaign": "boxabl",
+   "label": "Boxabl official content Drive",
+   "url": "https://drive.google.com/drive/folders/14hsa8iKW0kFY9yAZBTsTUvxr_lgoGelk",
+   "priority": 0,
+   "status": "new",
+   "used_ranges": []
+  },
+  {
    "id": "boxabl-enes",
    "campaign": "boxabl",
    "label": "Enes Yilmazer tour (15M views)",

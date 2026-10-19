@@ -77,14 +77,22 @@ cut from the approved footage in `sources.json`.
 1. `git pull --rebase origin main`, then `python scripts/ledger.py summary`. If `queue_clips` is
    already at the target, stop and say "Queue is full".
 2. Set up (every run):
-   `pip install -q "yt-dlp[default,deno]" faster-whisper imageio-ffmpeg numpy` and
+   `pip install -q "yt-dlp[default,deno]" faster-whisper imageio-ffmpeg numpy gdown` and
    `export CLIPKIT_WORK=$HOME/rawcut-work`. Downloads and work files live there, **outside the
    repo**. Never commit anything from it.
-3. Pick a source from `sources.json`: its campaign must be `active`, its `status` not `done` or
-   `blocked`. Take the lowest `priority` number first, then the one with the fewest `used_ranges`.
-4. Download: `python tools/clipkit.py fetch "<url>" --name <source id>`. If it fails (for example
-   YouTube "confirm you're not a bot", HTTP 403/429), retry once. If it still fails, set the
-   source's `status` to `"blocked"` with an `"error"` note and move on to the next source.
+3. Run `python scripts/expand_drive.py`. It turns Google Drive folder sources into one source per
+   video file. Then pick a source from `sources.json`: its campaign must be `active` and its
+   `status` must be `new` or `in_progress` (skip `done`, `blocked`, `expanded`). **Skip YouTube
+   URLs while `config.factory.try_youtube` is false**, because YouTube blocks cloud downloads with a
+   bot check. Take the lowest `priority` number first, then the one with the fewest `used_ranges`.
+   Set its `status` to `in_progress` while it still has unused moments.
+4. Download: `python tools/clipkit.py fetch "<url>" --name <source id>`. For a Google Drive file,
+   if that fails or gives a tiny or HTML file, use gdown:
+   `python -m gdown --fuzzy "<url>" -O $CLIPKIT_WORK/<source id>.mp4`, then
+   `python tools/clipkit.py fetch $CLIPKIT_WORK/<source id>.mp4 --name <source id>`.
+   If it still fails after one retry, set `status` to `"blocked"` with an `"error"` note and move
+   on to the next source. If a YouTube download hits the bot check, stop trying YouTube for this
+   run.
 5. Transcript: `python tools/clipkit.py transcript <source id> --model base.en`, then read
    `$CLIPKIT_WORK/projects/<source id>/transcript.txt`.
 6. Pick moments (needed = target − queue, at most `max_clips_per_run` per run) using the rules in
