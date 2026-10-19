@@ -8,8 +8,9 @@
    "label": "Boxabl official content Drive",
    "url": "https://drive.google.com/drive/folders/14hsa8iKW0kFY9yAZBTsTUvxr_lgoGelk",
    "priority": 0,
-   "status": "new",
-   "used_ranges": []
+   "status": "blocked",
+   "used_ranges": [],
+   "error": "folder listing failed: Failed to retrieve file url:\n\n\tCannot retrieve the public link of the file. You may need to change\n\tthe permission to 'Anyone with the link', or have had many accesses.\n\tCheck FAQ in https://github.com/wkentaro/gdown?tab=readme-ov-file#faq.\n\nYou may still be able to access the"
   },
   {
    "id": "boxabl-enes",
