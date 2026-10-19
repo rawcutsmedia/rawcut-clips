@@ -74,7 +74,8 @@
         "No other brands' watermarks; avoid moments dominated by another brand's logo or sponsor read."
       ],
       "payment_notes": "Pays only if at least 40% of the clip's audience is US/UK/CA/AUS. 'Share audience demographics' is required when submitting. Up to $500 per clip.",
-      "notes": "Optional: Boxabl affiliate program at boxabl.com/affiliate."
+      "notes": "Optional: Boxabl affiliate program at boxabl.com/affiliate.",
+      "caption_fixes": "boxable=BOXABL,boxal=BOXABL,boxbool=BOXABL,box ball=BOXABL,box bable=BOXABL,box book=BOXABL,box school=BOXABL,bucks will=BOXABL,box full=BOXABL,box flexible=BOXABL,cita=Casita,casino=Casita,galliano=Galiano,box w=BOXABL,ca=Casita,boxall=BOXABL"
     }
   }
 }

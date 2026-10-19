@@ -53,9 +53,10 @@
    "label": "Orkun Isitmak (6.3M views)",
    "url": "https://youtu.be/eS-fnedN2yI",
    "priority": 1,
-   "status": "new",
+   "status": "done",
    "used_ranges": [],
-   "pc_file": "Videos/Boxabl/eS-fnedN2yI.mp4"
+   "pc_file": "Videos/Boxabl/eS-fnedN2yI.mp4",
+   "error": "No English subtitles on the PC download (video is not in English), so no captions. Skipped."
   },
   {
    "id": "boxabl-fazerug",

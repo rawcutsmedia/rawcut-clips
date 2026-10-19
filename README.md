@@ -7,6 +7,7 @@ once it's connected. Two scheduled Claude runs do the work:
 |---|---|---|
 | ~3:07 AM daily | Clip factory | Keeps 3 days of clips in `queue/`. It downloads approved campaign footage from [`sources.json`](sources.json), picks the best moments, and cuts captioned 9:16 clips that follow each campaign's rules |
 | ~6:07 AM daily | Morning job | Takes the next **5** clips from `queue/`, writes a different caption per platform (with #ad for paid campaigns), optionally adds an AI voiceover hook, and schedules them in Buffer |
+| 7:57 PM Tue/Thu/Sat | PC top-up | Runs on your computer (have it on with the Claude app open). Cuts new clips from the Boxabl videos saved in `Videos\Boxabl` and tops the queue up to 4 days. The evening email the night before reminds you |
 | ~10:47 PM daily | Evening job | Checks which posts went live, emails you the links to submit to Whop/Vyro (plus problems and clips left), and deletes videos that have finished posting |
 
 **Posting times (New York):** TikTok 7:00 AM, 1:00 PM, 6:00 PM, 8:30 PM, 10:00 PM · YouTube 7:30 AM, 12:30 PM, 4:30 PM, 7:30 PM, 9:30 PM.

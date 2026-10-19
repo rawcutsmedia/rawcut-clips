@@ -72,10 +72,13 @@ safe choice, and report what you did in the final message and the email.
   plus `#ad` if paid.
 
 ## Clip factory job (keep the queue stocked)
-Goal: keep at least `factory.min_queue_days` × `clips_per_day` clips in `queue/` (3 × 5 = 15),
+Goal: keep at least `factory.min_queue_days` × `clips_per_day` clips in `queue/` (4 × 5 = 20),
 cut from the approved footage in `sources.json`.
 1. `git pull --rebase origin main`, then `python scripts/ledger.py summary`. If `queue_clips` is
-   already at the target, stop and say "Queue is full".
+   already at the target, stop and say "Queue is full". If no source with an active campaign and
+   status `new`/`in_progress` can be downloaded from the cloud (every one is a YouTube URL while
+   `try_youtube` is false), stop right away and say "No cloud footage; the PC top-up job keeps
+   the queue stocked".
 2. Set up (every run):
    `pip install -q "yt-dlp[default,deno]" faster-whisper imageio-ffmpeg numpy gdown` and
    `export CLIPKIT_WORK=$HOME/rawcut-work`. Downloads and work files live there, **outside the
@@ -119,6 +122,57 @@ cut from the approved footage in `sources.json`.
 12. Final message: clips added (title, length, source), sources marked done or blocked, and the
     queue total.
 
+## PC top-up job (keep the queue stocked from footage on the user's PC)
+A scheduled task that runs on the user's computer (Tue, Thu and Sat at 7:57 PM New York time).
+YouTube blocks cloud downloads, so approved footage was downloaded once onto the PC: each
+`sources.json` entry with `pc_file` sits in the PC's `Videos/Boxabl` folder, next to its
+`<id>.en.vtt` subtitles. The PC cuts short lossless pieces, and this session renders them with
+`tools/pc_batch.py`. Run unattended: don't ask questions.
+1. If the repo isn't already here, call `add_repo` (owner `rawcutsmedia`, repo `rawcut-clips`,
+   access `push`), clone it and cd into it. Then `git pull --rebase origin main`,
+   `pip install -q imageio-ffmpeg numpy` and `export CLIPKIT_WORK=$HOME/rawcut-work`.
+2. `python tools/pc_batch.py need`. If `need` is 0, stop and say "Queue is full".
+3. Check the PC with device_bash: `ls "$HOME"/mnt/*/Boxabl | head`. If the device tools are
+   missing or the computer can't be reached, stop and say: "Your computer was off or the Claude
+   app was closed, so no clips were made. Queue: <n> clips (<days> days)."
+4. `python tools/pc_batch.py sources` lists usable sources, best first. Work down the list until you
+   have `need` good moments (at most 3 sources). For each source, stage its subtitles
+   (`device_stage_files` on `~/mnt/Videos/Boxabl/<pc_file stem>.en.vtt`), run
+   `python tools/pc_batch.py transcript <source id> <staged path>` and read the transcript. If it
+   reads like a machine translation (the speaker isn't speaking English), run
+   `python tools/pc_batch.py status <id> done "not English"` and move on.
+5. Pick moments using `tools/PICK_MOMENTS_PROMPT.txt` and the campaign's `clip_rules`:
+   - Each clip is 20–55 s, starts on the hook, and ends on a payoff.
+   - Content is positive. Leave out anything within 10 s of the source's `used_ranges`, stock or
+     investing talk, sponsor reads, and "like and subscribe" bait.
+   - Hook title is 8 words or fewer and contains BOXABL.
+   - Get exact times with `python tools/pc_batch.py words <id> <from> <to>`: `start` is the first
+     word's start and `end` is the last word's end. Never end on "and", "so", or mid-sentence.
+   - Write `$CLIPKIT_WORK/projects/<id>/clips.json`.
+   - If a source has fewer than 3 good unused moments left, mark it done afterwards with
+     `python tools/pc_batch.py status <id> done`.
+6. `python tools/pc_batch.py cutplan <id> [<id> ...]` prints one device_bash command. Run it
+   exactly as printed, in a single call. It writes `Videos/Boxabl/rawcut-pieces/slotNN.mp4` on the
+   PC, overwriting the last batch.
+7. Stage `~/mnt/Videos/Boxabl/rawcut-pieces/offsets.json` and the slots, 3 files per
+   `device_stage_files` call. Uploads are rate-limited: if a file fails, start rendering what you
+   have and retry it later, up to 5 tries. If one file keeps failing, copy it on the PC
+   (`cp slotNN.mp4 slotNN-b.mp4`) and stage the copy.
+8. `python tools/pc_batch.py render`, in the background (about 1.5 min per clip). Run it again after
+   staging more slots; it skips finished ones.
+9. Run `python tools/pc_batch.py review` and Read every contact sheet it makes.
+   - `drop <slot>` any clip that is black, cuts off the main subject, has broken captions, starts
+     or ends mid-word, or breaks a campaign rule.
+   - If a caption misspells BOXABL or Casita, add the fix to the campaign's `caption_fixes`, delete
+     `$CLIPKIT_WORK/render/<slot>.done`, and render again.
+10. `python tools/pc_batch.py queue` copies the clips into `queue/` and records `used_ranges`. Then
+    `git add queue sources.json campaigns.json && git commit -m "PC top-up: <n> clips" &&
+    git push origin HEAD:main`.
+11. Final message: clips added (title, length, source), sources marked done, and the queue total
+    with days covered. If `sources` shows fewer than 3 usable sources, add: "PC footage is running
+    low. Ask Claude to download more approved Boxabl videos."
+On the PC, only write inside `Videos/Boxabl/rawcut-pieces`, and never delete anything.
+
 ## Evening job (report links to submit)
 1. `git pull --rebase origin main`.
 2. `python scripts/ledger.py pending` lists posts whose time has passed.
@@ -129,6 +183,10 @@ cut from the approved footage in `sources.json`.
 4. `python scripts/ledger.py summary`, and `list_posts` with status `scheduled` for tomorrow.
 5. Send **one** plain-text email with the Gmail connector to the recipient named in the run prompt:
    - Subject: `Rawcut daily: <n> live, <n> to submit` (add `[TEST MODE]` when test_mode is true)
+   - **PC reminder (Monday, Wednesday and Friday emails only)**: append ` · PC on tomorrow 7:57 PM`
+     to the subject, and make the email's first line: "⏰ Reminder: tomorrow (<Tuesday / Thursday /
+     Saturday>) at 7:57 PM New York time, the clip top-up runs on your computer. Have it on with
+     the Claude desktop app open for about 30 minutes."
    - **Submit these links**: grouped by campaign → platform, link, title, posted time
      (skip `organic`; nothing to submit).
    - **Problems**: failed posts with Buffer's error; clips waiting for a campaign.
@@ -147,6 +205,7 @@ cut from the approved footage in `sources.json`.
 - Never post a clip that isn't in `queue/` or has no active campaign.
 - Never delete or move anything in `media/` except through `scripts/cleanup.py` (scheduled posts
   depend on those links).
-- Never commit downloaded source videos or anything from `$CLIPKIT_WORK`.
+- Never commit downloaded source videos or anything from `$CLIPKIT_WORK` (finished clips copied
+  into `queue/` are the one exception).
 - Never put API keys, emails or tokens in this repo. It's public.
 - Never retry a failed Buffer call more than once. Log it and move on.

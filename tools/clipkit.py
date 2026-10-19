@@ -645,14 +645,14 @@ def layout_filter(layout, info, facecam=None, center=0.5):
 # ----------------------------------------------------------------- cut
 
 
-def snap_to_words(words_abs, s, e):
+def snap_to_words(words_abs, s, e, back=0.6, fwd=1.5):
     """Move start/end so the clip begins and ends on whole words."""
     if not words_abs:
         return s, e
-    starts = [w for w in words_abs if w["s"] >= s - 0.6]
+    starts = [w for w in words_abs if w["s"] >= s - back]
     if starts:
         s = max(0.0, starts[0]["s"] - 0.15)
-    inside = [w for w in words_abs if w["e"] <= e + 1.5 and w["s"] >= s]
+    inside = [w for w in words_abs if w["e"] <= e + fwd and w["s"] >= s]
     if inside:
         # prefer ending on a sentence end within the last ~3 seconds
         enders = [w for w in inside if re.search(r"[.?!]$", w["w"]) and w["e"] >= e - 3]
@@ -725,8 +725,8 @@ def cmd_cut(a):
                 wabs = fix_words([{"w": w["w"], "s": w["s"] + pad0, "e": w["e"] + pad0}
                                   for w in transcribe_words(wav, a.model, a.gpu)], a.fix)
                 wav.unlink(missing_ok=True)
-            if not a.no_snap:
-                s, e = snap_to_words(wabs, s, e)
+            if not a.no_snap:  # subtitle timings are exact: clips.json gives word start/end
+                s, e = snap_to_words(wabs, s, e, *((0.25, 0.05) if vtt_words else ()))
             if e - s > a.max_len:  # YouTube blocks claimed Shorts over 60s
                 fits = [w for w in wabs if w["s"] >= s and w["e"] <= s + a.max_len - 0.3]
                 e = (fits[-1]["e"] + 0.3) if fits else s + a.max_len
