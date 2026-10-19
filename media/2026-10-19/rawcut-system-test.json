@@ -1,0 +1,12 @@
+{
+  "title": "Rawcut system test",
+  "campaign": "organic",
+  "source_title": "Rawcut Media test clip",
+  "source_url": null,
+  "duration": 8.0,
+  "transcript": "This is an automated system test clip for Rawcut Media. It is safe to delete.",
+  "media_path": "media/2026-10-19/rawcut-system-test.mp4",
+  "raw_url": "https://raw.githubusercontent.com/rawcutsmedia/rawcut-clips/main/media/2026-10-19/rawcut-system-test.mp4",
+  "voiceover": false,
+  "prepared_at": "2026-10-19T12:14:33-04:00"
+}
