@@ -18,9 +18,34 @@
    "label": "Enes Yilmazer tour (15M views)",
    "url": "https://youtu.be/8JMrfSFQdpo",
    "priority": 1,
-   "status": "blocked",
-   "used_ranges": [],
-   "error": "YouTube bot check / HTTP 429 from cloud IP on 2026-10-19 (failed after retry)"
+   "status": "in_progress",
+   "used_ranges": [
+    [
+     2.0,
+     49.0
+    ],
+    [
+     457.6,
+     502.2
+    ],
+    [
+     580.2,
+     632.5
+    ],
+    [
+     733.6,
+     773.0
+    ],
+    [
+     893.5,
+     939.3
+    ],
+    [
+     213.4,
+     238.7
+    ]
+   ],
+   "pc_file": "Videos/Boxabl/8JMrfSFQdpo.mp4"
   },
   {
    "id": "boxabl-orkun",
@@ -28,9 +53,9 @@
    "label": "Orkun Isitmak (6.3M views)",
    "url": "https://youtu.be/eS-fnedN2yI",
    "priority": 1,
-   "status": "blocked",
+   "status": "new",
    "used_ranges": [],
-   "error": "YouTube bot check / HTTP 429 from cloud IP on 2026-10-19 (failed after retry)"
+   "pc_file": "Videos/Boxabl/eS-fnedN2yI.mp4"
   },
   {
    "id": "boxabl-fazerug",
@@ -38,8 +63,26 @@
    "label": "Faze Rug (4.7M views)",
    "url": "https://youtu.be/uu5aORByttg",
    "priority": 1,
-   "status": "new",
-   "used_ranges": []
+   "status": "in_progress",
+   "used_ranges": [
+    [
+     225.0,
+     260.2
+    ],
+    [
+     751.7,
+     782.6
+    ],
+    [
+     298.8,
+     326.0
+    ],
+    [
+     90.0,
+     125.9
+    ]
+   ],
+   "pc_file": "Videos/Boxabl/uu5aORByttg.mp4"
   },
   {
    "id": "boxabl-graham",
@@ -47,8 +90,30 @@
    "label": "Graham Stephan (3M views)",
    "url": "https://youtu.be/0Cdqs2Q1Vis",
    "priority": 1,
-   "status": "new",
-   "used_ranges": []
+   "status": "in_progress",
+   "used_ranges": [
+    [
+     0.0,
+     26.5
+    ],
+    [
+     70.7,
+     104.5
+    ],
+    [
+     119.3,
+     163.4
+    ],
+    [
+     393.1,
+     430.3
+    ],
+    [
+     545.3,
+     570.8
+    ]
+   ],
+   "pc_file": "Videos/Boxabl/0Cdqs2Q1Vis.mp4"
   },
   {
    "id": "boxabl-airrack",
@@ -57,7 +122,8 @@
    "url": "https://youtu.be/7rX5cPQrx_s",
    "priority": 1,
    "status": "new",
-   "used_ranges": []
+   "used_ranges": [],
+   "error": "Not downloaded on the PC (yt-dlp skipped it)."
   },
   {
    "id": "boxabl-elon",
@@ -76,7 +142,8 @@
    "url": "https://youtu.be/JbS_VhA0rRo",
    "priority": 2,
    "status": "new",
-   "used_ranges": []
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/JbS_VhA0rRo.mp4"
   },
   {
    "id": "boxabl-808",
@@ -84,8 +151,10 @@
    "label": "808 (1.7M views)",
    "url": "https://youtu.be/5Lo54Lx7MCU",
    "priority": 2,
-   "status": "new",
-   "used_ranges": []
+   "status": "done",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/5Lo54Lx7MCU.mp4",
+   "error": "Audio is not English (subtitles are auto-translated), so captions and the US/UK audience rule do not fit. Skipped."
   },
   {
    "id": "boxabl-ellie",
@@ -94,7 +163,8 @@
    "url": "https://youtu.be/KrahQlLAz44",
    "priority": 2,
    "status": "new",
-   "used_ranges": []
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/KrahQlLAz44.mp4"
   },
   {
    "id": "boxabl-irina",
@@ -103,7 +173,8 @@
    "url": "https://youtu.be/3plLxp_7Jlo",
    "priority": 2,
    "status": "new",
-   "used_ranges": []
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/3plLxp_7Jlo.mp4"
   },
   {
    "id": "boxabl-nyse",
@@ -112,7 +183,8 @@
    "url": "https://youtu.be/Cz9cwL_fqTI",
    "priority": 3,
    "status": "new",
-   "used_ranges": []
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/Cz9cwL_fqTI.mp4"
   },
   {
    "id": "boxabl-factory-1",
@@ -121,7 +193,8 @@
    "url": "https://youtu.be/IBV7eIH3Bdw",
    "priority": 3,
    "status": "new",
-   "used_ranges": []
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/IBV7eIH3Bdw.mp4"
   },
   {
    "id": "boxabl-factory-2",
@@ -130,7 +203,8 @@
    "url": "https://youtu.be/b9erzF6LHKI",
    "priority": 3,
    "status": "new",
-   "used_ranges": []
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/b9erzF6LHKI.mp4"
   },
   {
    "id": "boxabl-factory-3",
@@ -139,7 +213,8 @@
    "url": "https://youtu.be/9ThVUNGj3To",
    "priority": 3,
    "status": "new",
-   "used_ranges": []
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/9ThVUNGj3To.mp4"
   },
   {
    "id": "boxabl-factory-4",
@@ -148,7 +223,9 @@
    "url": "https://youtu.be/rUArr8SWyf8",
    "priority": 3,
    "status": "new",
-   "used_ranges": []
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/rUArr8SWyf8.mp4"
   }
- ]
+ ],
+ "_pc_footage": "YouTube blocks cloud downloads, so these videos were downloaded once on the user's PC into Videos/Boxabl (pc_file, with <id>.en.vtt subtitles). A session linked to the PC cuts lossless pieces there, stages them, and renders with tools/clipkit.py (captions from the .vtt via --words vtt)."
 }

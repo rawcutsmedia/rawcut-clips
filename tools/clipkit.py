@@ -312,6 +312,79 @@ def parse_vtt(path):
     return lines_out
 
 
+TS_RE = re.compile(r"<(\d+:\d+:\d+\.\d+|\d+:\d+\.\d+)>")
+
+
+def parse_vtt_words(path):
+    """Word timings from a .vtt. YouTube auto-captions carry a <time> tag per word;
+    plain subtitles get their words spread evenly over the cue."""
+    words, recent = [], []
+    cue_s = cue_e = None
+
+    def emit(s, text):
+        for t in text.split():
+            if not re.fullmatch(r"\[.*\]", t):  # [Music], [Applause]
+                words.append({"w": t, "s": s, "e": None})
+
+    for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        if "-->" in raw:
+            a_, b_ = raw.split("-->")
+            cue_s, cue_e = parse_time(a_.strip()), parse_time(b_.strip().split()[0])
+            continue
+        if cue_s is None:
+            continue
+        plain = re.sub(r"\s+", " ", TAG_RE.sub("", raw)).strip()
+        if not plain:
+            continue
+        if TS_RE.search(raw):
+            parts = TS_RE.split(raw)  # [text0, t1, text1, t2, text2, ...]
+            emit(cue_s, TAG_RE.sub("", parts[0]))
+            for k in range(1, len(parts), 2):
+                emit(parse_time(parts[k]), TAG_RE.sub("", parts[k + 1]))
+        elif plain not in recent:
+            toks = plain.split()
+            step = max(0.05, (cue_e - cue_s) / max(1, len(toks)))
+            for j, t in enumerate(toks):
+                emit(cue_s + j * step, t)
+        else:
+            continue
+        recent = (recent + [plain])[-3:]
+    words.sort(key=lambda w: w["s"])
+    for i, w in enumerate(words):
+        nxt = words[i + 1]["s"] if i + 1 < len(words) else w["s"] + 0.6
+        w["e"] = max(w["s"] + 0.05, min(nxt, w["s"] + 1.2))
+    return words
+
+
+def fix_words(words, pairs):
+    """Apply 'from=to' fixes (case-insensitive, may span two words) e.g. 'box able=BOXABL'."""
+    if not pairs:
+        return words
+    fixes = {}
+    for p in pairs.split(","):
+        if "=" in p:
+            k, v = p.split("=", 1)
+            fixes[k.strip().lower()] = v.strip()
+    out, i = [], 0
+    while i < len(words):
+        w = words[i]
+        core = re.sub(r"[^\w' ]", "", w["w"]).lower()
+        if i + 1 < len(words):
+            two = core + " " + re.sub(r"[^\w' ]", "", words[i + 1]["w"]).lower()
+            if two in fixes:
+                out.append({"w": fixes[two], "s": w["s"], "e": words[i + 1]["e"]})
+                i += 2
+                continue
+        tail = re.sub(r"^[\w']+", "", w["w"])
+        for k, v in fixes.items():
+            if " " not in k and re.fullmatch(rf"{re.escape(k)}(s|'s)?", core):
+                w = {**w, "w": v + core[len(k):] + tail}
+                break
+        out.append(w)
+        i += 1
+    return out
+
+
 def write_transcript(pdir, items):
     """items: [(start_seconds, text)] -> ~12 second paragraphs with timestamps."""
     paras, cur, cur_start = [], [], None
@@ -618,6 +691,16 @@ def cmd_cut(a):
     fps_args = ["-r", "60"] if info["fps"] > 61 else []
     stamp = __import__("datetime").datetime.now().strftime("%Y%m%d-%H%M")
     made = []
+    # Caption timings: the video's own subtitles (instant, no speech model) or Whisper.
+    vtt_words = None
+    vtts = sorted(pdir.glob("subs*.vtt"), key=lambda p: ("orig" in p.name, len(p.name)))
+    if vtts and a.words != "whisper" and not a.no_captions:
+        vtt_words = fix_words(parse_vtt_words(vtts[0]), a.fix) or None
+        if vtt_words:
+            print(f"Captions from subtitles: {vtts[0].name}")
+    if a.words == "vtt" and not vtt_words and not a.no_captions:
+        die("--words vtt: no subs*.vtt with words in this project")
+    offset = float(meta.get("offset", 0) or 0)  # source is a piece starting at this time
     for i, c in enumerate(clips, 1):
         s, e = parse_time(c["start"]), parse_time(c["end"])
         if e <= s:
@@ -629,13 +712,16 @@ def cmd_cut(a):
         print(f"\n[{i}/{len(clips)}] {fmt_hms(s)}-{fmt_hms(e)}  {title}")
         words = []
         if not a.no_captions:
-            pad0 = max(0.0, s - 2.0)
-            wav = tmp / f"c{i:02d}.wav"
-            extract_wav(src, pad0, (e + 2.0) - pad0, wav)
-            print("  transcribing for captions...")
-            wabs = [{"w": w["w"], "s": w["s"] + pad0, "e": w["e"] + pad0}
-                    for w in transcribe_words(wav, a.model, a.gpu)]
-            wav.unlink(missing_ok=True)
+            if vtt_words:
+                wabs = [w for w in vtt_words if w["s"] >= s - 2.0 and w["e"] <= e + 2.0]
+            else:
+                pad0 = max(0.0, s - 2.0)
+                wav = tmp / f"c{i:02d}.wav"
+                extract_wav(src, pad0 - offset, (e + 2.0) - pad0, wav)
+                print("  transcribing for captions...")
+                wabs = fix_words([{"w": w["w"], "s": w["s"] + pad0, "e": w["e"] + pad0}
+                                  for w in transcribe_words(wav, a.model, a.gpu)], a.fix)
+                wav.unlink(missing_ok=True)
             if not a.no_snap:
                 s, e = snap_to_words(wabs, s, e)
             if e - s > a.max_len:  # YouTube blocks claimed Shorts over 60s
@@ -656,7 +742,7 @@ def cmd_cut(a):
         fg = fgraph + f";[base]subtitles={rel_ass}:fontsdir={rel_fonts}[v]"
         out = outdir / f"{stamp}_{i:02d}_{label}.mp4"
         print("  rendering 1080x1920...")
-        run([ff(), "-y", "-v", "error", "-stats", "-ss", f"{s:.3f}", "-i", str(src),
+        run([ff(), "-y", "-v", "error", "-stats", "-ss", f"{s - offset:.3f}", "-i", str(src),
              "-t", f"{dur:.3f}", "-filter_complex", fg, "-map", "[v]", "-map", "0:a:0?",
              *fps_args, "-c:v", "libx264", "-preset", a.preset, "-crf", "21",
              "-maxrate", "3000k", "-bufsize", "6000k",
@@ -737,6 +823,9 @@ def main():
                    help="longest allowed clip in seconds (default 59 for YouTube Shorts)")
     c.add_argument("--outdir", help="write finished clips here instead of the project's clips/ folder")
     c.add_argument("--campaign", help="campaign key from campaigns.json (written to each clip's .json)")
+    c.add_argument("--words", choices=["auto", "vtt", "whisper"], default="auto",
+                   help="caption timings: the video's subtitles (auto when present) or Whisper")
+    c.add_argument("--fix", help="caption word fixes, e.g. 'boxable=BOXABL,box able=BOXABL'")
     c.add_argument("--preset", default="veryfast")
     c.add_argument("--gpu", action="store_true")
     c.set_defaults(fn=cmd_cut)
