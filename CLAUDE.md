@@ -52,7 +52,8 @@ safe choice, and report what you did in the final message and the email.
       "isAiGenerated": <voiceover>}`.
 11. Record every post, successful or failed:
     `python scripts/ledger.py add --platform <p> --post-id <id> --due-at <dueAt> --media <media_path>
-    --campaign <key> --title "<hook title>" --status <scheduled|draft|error> [--error "..."]`.
+    --campaign <key> --title "<hook title>" --tags "<the hashtags used, space-separated>"
+    --status <scheduled|draft|error> [--error "..."]`.
 12. `git add -A && git commit -m "Log posts <date>" && git push origin HEAD:main`.
 13. Final message: what was scheduled (platform, time, title), anything skipped and why, and how
     many clips are left in `queue/` (`python scripts/ledger.py summary`).
@@ -67,10 +68,21 @@ safe choice, and report what you did in the final message and the email.
   `required_mentions`, word for word.
 - Follow every item in the campaign's `caption_rules` (for example Boxabl: tag @boxabl, spell
   BOXABL right, never mention stock or a ticker).
-- 3–5 relevant lowercase hashtags. At most 2 emojis. No engagement bait ("comment YES").
-- TikTok caption: under 150 characters before the hashtags.
-- YouTube title: 90 characters max, ending in ` #Shorts`. Description: 1–2 lines, then hashtags,
-  plus `#ad` if paid.
+- Hashtags: 4–5 per post, all lowercase, picked from the campaign's `hashtags` bank in
+  `campaigns.json`:
+  - all of `always`;
+  - 1–2 from `core`, rotated so clips in a row don't repeat the same set;
+  - 1 from `by_topic` that matches what the clip is about.
+  - YouTube also gets everything in `youtube_only` (`#shorts`).
+  - Never use anything in `avoid`.
+  - If `insights.md` names hashtags that do better or worse, follow it.
+  - Campaigns without a `hashtags` bank: 3–5 relevant niche hashtags. Never #fyp, #foryou or #viral.
+- At most 2 emojis. No engagement bait ("comment YES").
+- TikTok caption: under 150 characters before the hashtags. Hashtags go at the end.
+- YouTube title: 90 characters max, with no hashtags in it (they waste title space). Description: 1–2
+  lines, then the hashtags in this order: `#ad` first, then `#boxabl` (the campaign's brand tag), then
+  a `core` tag, then the rest, with `#shorts` last. The first three show above the title, which keeps
+  the #ad disclosure visible.
 
 ## Clip factory job (keep the queue stocked)
 Goal: keep at least `factory.min_queue_days` × `clips_per_day` clips in `queue/` (4 × 5 = 20),
@@ -208,12 +220,16 @@ On the PC, only write inside `Videos/Boxabl/rawcut-pieces`, and never delete any
    `cleanup_after_days` ago (Buffer has already uploaded them to the platforms).
    **On Sundays only**, first update `insights.md` from `python scripts/ledger.py stats --days 14`. Keep it
    to 15 lines or fewer:
-   - which kinds of moments, hook titles, sources and posting times got the most views and which got
-     the fewest;
+   - which kinds of moments, hook titles, sources, posting times and hashtags (`hashtag_avg_views`) got
+     the most views and which got the fewest;
    - then 3–5 concrete rules for the next week, e.g. "more price/durability moments", "titles that ask
      a question beat statements", "TikTok 6 PM beats 1 PM".
-   Only state what the numbers show, and once there are at least 20 measured posts. Then squash git
-   history so deleted videos stop taking up space:
+   Only state what the numbers show, and once there are at least 20 measured posts.
+   **On the first Sunday of each month**, also refresh each active campaign's `hashtags` bank in
+   `campaigns.json`. Search the web for this month's popular TikTok and YouTube Shorts hashtags in the
+   campaign's niche. Add clearly relevant ones, drop tags `insights.md` shows doing badly, keep `always`
+   and `avoid` as they are, and update `researched`. Then squash git history so deleted videos stop
+   taking up space:
    `git add -A && git commit -m "Evening <date>" ; git checkout --orphan squash && git add -A &&
    git commit -m "Squash history <date>" && git push --force origin squash:main`.
    On other days just commit and push to `main`.

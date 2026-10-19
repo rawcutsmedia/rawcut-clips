@@ -39,6 +39,7 @@ def main():
         p.add_argument(f, required=f in ("--platform", "--due-at", "--media"))
     p.add_argument("--status", default="scheduled")
     p.add_argument("--error")
+    p.add_argument("--tags", help='hashtags used, e.g. "#ad #boxabl #tinyhouse"')
     u = sub.add_parser("update")
     u.add_argument("--post-id", required=True)
     u.add_argument("--status")
@@ -61,6 +62,7 @@ def main():
                      "media": a.media, "raw_url": cfg["raw_base_url"] + a.media,
                      "campaign": a.campaign, "title": a.title, "status": a.status,
                      "error": a.error, "link": None, "submitted": False,
+                     "tags": (a.tags or "").lower().split(),
                      "created_at": now.isoformat(timespec="seconds")})
         write(rows)
         print("added")
@@ -110,6 +112,13 @@ def main():
         measured = [r for r in recent if r.get("views") is not None]
         ranked = sorted(measured, key=lambda r: r["views"], reverse=True)
         keep = ("platform", "title", "views", "est_usd", "when", "link")
+        by_tag = {}
+        for r in measured:
+            for t in r.get("tags") or []:
+                by_tag.setdefault(t, []).append(r["views"])
+        tag_avg = sorted(((t, round(sum(v) / len(v)), len(v)) for t, v in by_tag.items()
+                          if 3 <= len(v) < len(measured)),  # skip tags used on every post (#ad)
+                         key=lambda x: x[1], reverse=True)
         print(json.dumps({
             "days": a.days, "posts_sent": len(recent), "posts_measured": len(measured),
             "total_views": sum(r["views"] for r in measured),
@@ -117,6 +126,7 @@ def main():
             "posts_over_min_payout": sum(1 for r in recent if r["est_usd"] > 0),
             "top": [{k: r.get(k) for k in keep} for r in ranked[:5]],
             "bottom": [{k: r.get(k) for k in keep} for r in ranked[-5:]] if len(ranked) > 5 else [],
+            "hashtag_avg_views": [{"tag": t, "avg_views": v, "posts": n} for t, v, n in tag_avg],
         }, indent=2))
 
 
