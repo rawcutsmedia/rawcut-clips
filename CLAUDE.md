@@ -60,8 +60,15 @@ safe choice, and report what you did in the final message and the email.
 
 ### Caption rules
 - If `insights.md` exists, read it first and apply its lessons about hooks, titles and topics.
-- Line 1 is the hook: curiosity or stakes, never a lie, never the punchline. Different wording on
-  each platform; never paste the same caption twice.
+- Line 1 is the hook, and a bold hook beats a descriptive one. In the first week, bold claims and Elon
+  hooks got 100–300 views while plain tour descriptions got 0–10. Use one of two forms:
+  - the clip's most surprising or debatable claim, stated flatly ("A whole house every 15 minutes.");
+  - a pick-a-side question for the viewer ("Would you live in 400 sq ft for $50K?", "Is this the
+    future of housing?").
+  Debate is good; negativity isn't. Never call the brand fake, a scam or a gimmick, never mock anyone,
+  never claim anything the clip doesn't support, and never use politics or rage bait about groups of
+  people (campaigns reject these, and they get posts taken down). Never give away the punchline.
+  Use different wording on each platform; never paste the same caption twice.
 - Use the clip's `title`, `transcript` and `source_title` for context. Credit the source when known
   (for example "🎙️ via <show or creator>").
 - Paid campaigns (`paid: true`) must include **#ad** and every item in `required_text` and
@@ -157,6 +164,11 @@ YouTube blocks cloud downloads, so approved footage was downloaded once onto the
 5. Pick moments using `tools/PICK_MOMENTS_PROMPT.txt`, the campaign's `clip_rules`, and `insights.md`
    if it exists. `insights.md` is what has actually been getting views, so lean into it:
    - Each clip is 20–55 s, starts on the hook, and ends on a payoff.
+   - Prefer moments built around a bold, surprising or debatable claim: speed ("a house every 15
+     minutes"), price, size, durability tests, Elon Musk, or "fix the housing crisis". Plain feature
+     walk-throughs (shower, ceilings) do worst; take them only when nothing better is left.
+   - The hook title states the boldest *true* claim in the clip, or asks the viewer to pick a side
+     ("Would you live in this $50K BOXABL?"). Never use a vague description.
    - Content is positive. Leave out anything within 10 s of the source's `used_ranges`, stock or
      investing talk, sponsor reads, and "like and subscribe" bait.
    - Hook title is 8 words or fewer and contains BOXABL.
