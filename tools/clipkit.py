@@ -689,7 +689,7 @@ def cmd_cut(a):
     fgraph, cap_y, title_y, title_full = layout_filter(a.layout, info, facecam, a.center)
     outdir = Path(a.outdir).resolve() if a.outdir else pdir / "clips"
     tmp = pdir / "tmp"
-    outdir.mkdir(exist_ok=True)
+    outdir.mkdir(parents=True, exist_ok=True)
     tmp.mkdir(exist_ok=True)
     fps_args = ["-r", "60"] if info["fps"] > 61 else []
     stamp = __import__("datetime").datetime.now().strftime("%Y%m%d-%H%M")
