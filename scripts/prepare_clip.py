@@ -70,6 +70,12 @@ def main():
     work = Path(tempfile.mkdtemp(prefix="clip_"))
     cur = src
     max_s = float(cfg.get("max_clip_seconds", 59))
+    try:  # a campaign may allow longer videos (stories run 60-120 s; Shorts allow up to 3 min)
+        camp = json.loads((ROOT / "campaigns.json").read_text(encoding="utf-8"))["campaigns"].get(
+            sidecar.get("campaign"), {})
+        max_s = float(camp.get("max_seconds", max_s))
+    except Exception:
+        pass
     if info["duration"] and info["duration"] > max_s:
         out = work / "trim.mp4"
         run_ff(["-i", str(cur), "-t", f"{max_s}", "-c", "copy", "-movflags", "+faststart", str(out)])
@@ -122,7 +128,9 @@ def main():
         "duration": round(final["duration"] or 0, 2),
         "size_mb": round(cur.stat().st_size / 1e6, 1),
         "width": final["width"], "height": final["height"],
-        "voiceover": voiced,
+        "voiceover": voiced or bool(sidecar.get("ai_generated")),
+        "ai_generated": voiced or bool(sidecar.get("ai_generated")),
+        "credit": sidecar.get("credit"),
         "campaign": sidecar.get("campaign"),
         "title": sidecar.get("title"),
         "source_title": sidecar.get("source_title"),

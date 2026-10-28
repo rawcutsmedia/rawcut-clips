@@ -1,0 +1,47 @@
+HOW TO WRITE A RAWCUT SCARY STORY (read this every time before writing)
+
+Goal: an ORIGINAL first-person scary story that keeps a stranger watching to the last line of a
+65-95 second vertical video. Narrated by a slow, deep voice over Minecraft parkour.
+
+OUTPUT: one JSON file per story:
+  {"title": "...", "story": "...", "premise": "one line, for the repeat log", "theme": "..."}
+  Paragraphs in "story" are separated by a blank line (\n\n). Plain text only.
+
+LENGTH
+- story: 170-230 words. Title + story together must narrate in 65-95 seconds. TikTok only pays for
+  videos over 1 minute, so never go under 170 words.
+- title: 10-22 words, written like a confession post: first person, ordinary setting, one detail
+  that is wrong. It's read aloud first, so it is the hook.
+  Good: "My smart doorbell keeps recording someone knocking at 3 AM. The footage shows an empty porch."
+  Good: "I took a night job watching an empty parking garage. Rule 4 says never count the cars."
+  Bad: "A scary story about a haunted house" (vague), anything that gives away the twist.
+
+STRUCTURE
+1. Line 1 restates the hook as a concrete, specific moment (a time, a place, an object).
+2. Three escalating beats. Each one makes the wrong detail worse. Keep sentences short.
+3. A reveal that reframes everything, set up by an early detail the listener half-forgot.
+4. End on a short final line, 2-6 words, alone in its own paragraph. Leave the reader with the
+   threat still in the room. No moral, no explanation, no "and that's why I never...".
+
+STYLE
+- Ordinary, believable life: apartments, night shifts, babysitting the house (not kids in danger),
+  road trips, hiking, smart homes, voicemails, roommates, neighbors, hotel jobs, group chats.
+- Concrete details beat adjectives ("the porch light was off, and I always leave it on" beats
+  "it was terrifying"). Show, don't tell. No "suddenly", no "little did I know".
+- Write for the ear: times like "3 AM" or "11:40" are fine; avoid symbols, emojis, abbreviations,
+  ALL CAPS, parentheses, and long lists. Use dialogue sparingly, in quotes.
+- Creepy and tense, never graphic. PG-13: dread, wrongness, presence. No gore, no injuries in
+  detail, no self-harm or suicide, no sexual content, no children being hurt, no animals hurt,
+  no real crimes or real tragedies, no real people, brands or real named places, no slurs,
+  nothing hateful about any group.
+
+IT IS FICTION
+- Never copy or retell a real Reddit post, a creepypasta, a film or a book. Invent it.
+- Never claim it's true, never say it was posted on Reddit, never name a subreddit or a real user.
+
+VARIETY (check stories/log.jsonl first)
+- Don't reuse a premise, monster type or twist from the last 60 entries.
+- Rotate themes: rules-for-a-job, home intrusion that isn't a person, wrong number or voicemail,
+  smart device/camera, neighbor, road or hiking, hotel or night shift, mirror or photo,
+  sleep or memory, roommate or family member who isn't quite right.
+- If insights.md says some themes or title styles get more views, write more of those.

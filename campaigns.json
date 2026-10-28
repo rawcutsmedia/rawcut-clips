@@ -35,7 +35,7 @@
       "notes": "Copy the campaign's rules here (required sound, tags, banned edits). Set active to true once you've joined."
     },
     "boxabl": {
-      "active": true,
+      "active": false,
       "name": "Boxabl Official Clipping (Clip Farm, Whop Content Rewards)",
       "paid": true,
       "submit_where": "contentrewards.com -> Boxabl Official Clipping -> Submit clip",
@@ -127,6 +127,71 @@
         ],
         "researched": "2026-10-19"
       }
+    },
+    "scary-stories": {
+      "active": true,
+      "name": "Scary stories (original, AI-narrated, Minecraft parkour background)",
+      "paid": false,
+      "platforms": [
+        "tiktok",
+        "youtube",
+        "instagram"
+      ],
+      "required_text": [],
+      "required_mentions": [],
+      "min_seconds": 45,
+      "max_seconds": 170,
+      "voiceover_allowed": false,
+      "caption_rules": [
+        "Line 1 hooks with the story's scariest unanswered question or the wrong detail from the title. Never spoil the ending.",
+        "It's fiction: never say 'true story', 'this really happened', or that it came from Reddit or a real person.",
+        "End the caption with the clip's gameplay credit exactly as given in `credit` (e.g. 'Gameplay: Orbital - No Copyright Gameplay').",
+        "No gore words, no real people, brands or real tragedies."
+      ],
+      "hashtags": {
+        "always": [
+          "#scarystories"
+        ],
+        "core": [
+          "#horrorstory",
+          "#creepy",
+          "#horrortok",
+          "#scary",
+          "#creepypasta",
+          "#storytime"
+        ],
+        "by_topic": {
+          "ghost, haunting, presence": [
+            "#paranormal",
+            "#ghoststory"
+          ],
+          "neighbors, strangers, home, devices": [
+            "#creepyencounters"
+          ],
+          "woods, camping, roads": [
+            "#horrorstories"
+          ],
+          "night shift, rules, jobs": [
+            "#nightshift"
+          ],
+          "gameplay background": [
+            "#minecraftparkour"
+          ]
+        },
+        "youtube_only": [
+          "#shorts"
+        ],
+        "avoid": [
+          "#fyp",
+          "#foryou",
+          "#viral",
+          "#truestory",
+          "#reddit",
+          "#redditstories"
+        ],
+        "researched": "2026-10-28"
+      },
+      "notes": "Fully automated: the nightly factory writes original stories (tools/STORY_PROMPT.txt) and renders them with tools/story_maker.py. Not a paid campaign: income comes from TikTok Creator Rewards / YouTube Partner Program once the accounts qualify."
     }
   }
 }
