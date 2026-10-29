@@ -24,7 +24,7 @@ choice, and report what you did in the final message and the email.
   It's free-to-use footage that requires credit. Never delete it.
 
 ## Clip factory job (write and render story videos)
-Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue/` (4 × 5 = 20).
+Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue/` (3 × 5 = 15).
 1. `git pull --rebase origin main`, then `python scripts/ledger.py summary`. need = target −
    `queue_clips`, at most `factory.max_clips_per_run`. If need is 0, stop and say "Queue is full".
 2. Set up: `pip install -q piper-tts imageio-ffmpeg numpy pillow` and

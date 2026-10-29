@@ -47,7 +47,7 @@
   },
   "cleanup_after_days": 2,
   "factory": {
-    "min_queue_days": 4,
+    "min_queue_days": 3,
     "max_clips_per_run": 10,
     "max_sources_per_run": 3,
     "try_youtube": false

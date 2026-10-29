@@ -38,7 +38,8 @@ VOICE_URL = "https://github.com/rhasspy/piper/releases/download/v0.0.2/voice-en-
 VOICE_FILE = VOICE_DIR / "en-us-ryan-high.onnx"
 GAMEPLAY = Path(os.environ.get("STORY_GAMEPLAY") or ROOT / "assets" / "gameplay")
 FONT = ROOT / "fonts" / "Anton-Regular.ttf"
-W, H, FPS = 1080, 1920, 30
+W, H, FPS = 1080, 1920, 30      # design canvas (card, caption positions)
+OUT_W, OUT_H = 720, 1280        # encoded size
 PITCH = 0.93          # lower = deeper voice (tempo is restored, so timings don't move)
 PACE = 1.08           # piper length_scale: >1 = slower, more deliberate
 GAP, PARA_GAP, TITLE_GAP = 0.28, 0.6, 0.7
@@ -283,10 +284,14 @@ def cmd_make(a):
              f"sine=f=58.2:sample_rate=44100:d={total:.2f},volume=0.04[s2];"
              f"[n][s1][s2]amix=inputs=3:normalize=0,afade=t=in:d=1.5,"
              f"afade=t=out:st={max(0, total - 2):.2f}:d=2,volume=9.0[amb]")
-    vid_f = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={FPS},"
+    # Layout is designed at 1080x1920; the file is encoded at OUT_W x OUT_H (720p keeps files ~15 MB,
+    # the gameplay is 720p anyway, and libass scales the captions from PlayRes automatically).
+    k = OUT_W / W
+    vid_f = (f"[0:v]scale={OUT_W}:{OUT_H}:force_original_aspect_ratio=increase,crop={OUT_W}:{OUT_H},fps={FPS},"
              f"eq=brightness=-0.07:saturation=0.75:contrast=1.05,vignette=PI/3.2,setsar=1[bg];"
-             f"[2:v]format=rgba,fade=t=out:st={max(0.1, title_end - 0.35):.2f}:d=0.35:alpha=1[card];"
-             f"[bg][card]overlay=(W-w)/2:(H-h)/2-140:enable='lte(t,{title_end:.2f})'[v1];"
+             f"[2:v]format=rgba,scale=iw*{k:.4f}:-1,"
+             f"fade=t=out:st={max(0.1, title_end - 0.35):.2f}:d=0.35:alpha=1[card];"
+             f"[bg][card]overlay=(W-w)/2:(H-h)/2-{140 * k:.0f}:enable='lte(t,{title_end:.2f})'[v1];"
              f"[v1]subtitles=caps.ass:fontsdir=fonts[v]")
     out_dir = Path(a.out) if Path(a.out).is_absolute() else ROOT / a.out
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -297,7 +302,7 @@ def cmd_make(a):
     cmd = [ff(), "-y", "-v", "error", *bg_in, "-i", "voice_raw.wav", "-loop", "1", "-i", "card.png",
            "-filter_complex", f"{vid_f};{voice_f};{amb_f};[vo][amb]amix=inputs=2:normalize=0:duration=first[a]",
            "-map", "[v]", "-map", "[a]", "-t", f"{total:.2f}",
-           "-c:v", "libx264", "-preset", a.preset, "-crf", "23", "-maxrate", "3500k", "-bufsize", "7000k",
+           "-c:v", "libx264", "-preset", a.preset, "-crf", "23", "-maxrate", "1800k", "-bufsize", "3600k",
            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-ar", "44100",
            "-movflags", "+faststart", str(out)]
     subprocess.run(cmd, cwd=tmp, check=False, capture_output=True, text=True)
