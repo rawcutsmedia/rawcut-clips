@@ -55,7 +55,7 @@
   "story": {
     "engine": "kokoro",
     "voice": "am_michael",
-    "speed": 0.92,
+    "speed": 1.0,
     "_note": "Kokoro voices: am_michael (US male), af_heart (US female), bm_george (UK male), plus others. speed <1 = slower."
   }
 }

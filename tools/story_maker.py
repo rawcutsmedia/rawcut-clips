@@ -44,7 +44,7 @@ FONT = ROOT / "fonts" / "Anton-Regular.ttf"
 W, H, FPS = 1080, 1920, 30      # design canvas (card, caption positions)
 OUT_W, OUT_H = 720, 1280        # encoded size
 PACE = 1.08           # piper fallback only: length_scale >1 = slower
-GAP, PARA_GAP, TITLE_GAP = 0.28, 0.6, 0.7
+GAP, PARA_GAP, TITLE_GAP = 0.28, 0.5, 0.7
 
 
 def story_settings():
@@ -169,12 +169,60 @@ def split_sentences(text):
     return out
 
 
-def speak(voice, sentence):
-    audio = voice.say(sentence)
-    rate = voice.rate
-    loud = np.where(np.abs(audio) > 0.02 * (np.abs(audio).max() or 1))[0]
-    s0, s1 = (loud[0], loud[-1]) if len(loud) else (0, len(audio) - 1)
-    return audio, s0 / rate, s1 / rate
+# --- say numbers and times the way a person would ("3:02 AM" -> "three oh two in the morning")
+ONES = ("zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen "
+        "fifteen sixteen seventeen eighteen nineteen").split()
+TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+TIME_RE = re.compile(r"\b(\d{1,2})(?::(\d{2}))?\s*([AaPp]\.?\s?[Mm]\.?)(?!\w)|\b(\d{1,2}):(\d{2})\b")
+ROOM_RE = re.compile(r"\b([Rr]oom|[Aa]partment|[Uu]nit|[Ss]uite|[Ss]pace|[Cc]abin|[Ss]ite|[Ff]light|"
+                     r"[Bb]us|[Rr]oute|[Ll]ot|[Gg]ate)\s+(\d{3,4})\b")
+
+
+def num_words(n):
+    if n < 20:
+        return ONES[n]
+    if n < 100:
+        return TENS[n // 10] + ("" if n % 10 == 0 else "-" + ONES[n % 10])
+    return str(n)
+
+
+def pair_words(two):  # "14" -> "fourteen", "05" -> "oh five", "00" -> "hundred"
+    if two == "00":
+        return "hundred"
+    return "oh " + ONES[int(two[1])] if two[0] == "0" else num_words(int(two))
+
+
+def say_time(h, m, ampm):
+    h, m = int(h), int(m or 0)
+    pm = bool(ampm) and ampm.lower().startswith("p")
+    if ampm and h == 12 and m == 0:
+        return "noon" if pm else "midnight"
+    words = num_words(h) + ("" if m == 0 else " " + pair_words(f"{m:02d}"))
+    if not ampm:
+        return words + (" o'clock" if m == 0 else "")
+    if not pm:
+        return words + " in the morning"
+    return words + (" in the afternoon" if h == 12 or h < 6 else " in the evening" if h < 9 else " at night")
+
+
+def speech_text(text):
+    def time_sub(m):
+        if m.group(3):
+            rest = m.string[m.end():].lstrip()
+            end = "." if m.group(3).endswith(".") and (not rest or rest[0].isupper()) else ""
+            return say_time(m.group(1), m.group(2), re.sub(r"[.\s]", "", m.group(3))) + end
+        return say_time(m.group(4), m.group(5), None)
+
+    def room_sub(m):
+        n = m.group(2)
+        head = ONES[int(n[0])] if len(n) == 3 else num_words(int(n[:2]))
+        return f"{m.group(1)} {head} {pair_words(n[-2:])}"
+
+    return ROOM_RE.sub(room_sub, TIME_RE.sub(time_sub, text))
+
+
+def paragraphs(text):
+    return [re.sub(r"\s+", " ", p).strip() for p in re.split(r"\n\s*\n", text.strip()) if p.strip()]
 
 
 def word_weights(voice, words):
@@ -185,28 +233,82 @@ def word_weights(voice, words):
     return ws
 
 
+def align_words(audio, rate, toks, weights):
+    """Time each word in one paragraph spoken in a single take. The pauses the voice makes at
+    punctuation anchor the timeline; words between two anchors are spread by phoneme count."""
+    fr = max(1, int(rate * 0.02))
+    n = len(audio) // fr
+    if n < 2:
+        return [(0.0, len(audio) / rate)] * len(toks)
+    rms = np.sqrt(np.mean(audio[: n * fr].reshape(n, fr) ** 2, axis=1))
+    voiced = rms > max(rms.max() * 0.06, 1e-4)
+    idx = np.where(voiced)[0]
+    first, last = (idx[0], idx[-1]) if len(idx) else (0, n - 1)
+    gaps, i = [], first
+    while i <= last:
+        if voiced[i]:
+            i += 1
+            continue
+        j = i
+        while j <= last and not voiced[j]:
+            j += 1
+        if (j - i) * 0.02 >= 0.12:
+            if gaps and i * 0.02 - gaps[-1][1] < 0.08:  # a tiny blip splits one pause: merge
+                gaps[-1] = (gaps[-1][0], j * 0.02)
+            else:
+                gaps.append((i * 0.02, j * 0.02))
+        i = j
+    s0, s1 = first * 0.02, (last + 1) * 0.02
+    cum = np.concatenate([[0.0], np.cumsum(weights)])
+    total = cum[-1] or 1.0
+    bounds = [k + 1 for k, t in enumerate(toks[:-1]) if re.search(r"[.,!?;:…—–\"”')]$", t)]
+    speech = max((s1 - s0) - sum(b - a for a, b in gaps), 1e-3)
+    anchors, said, prev = [], 0.0, s0
+    for a, b in gaps:
+        said += a - prev
+        prev = b
+        want = said / speech * total
+        last_k = anchors[-1][0] if anchors else 0
+        cands = [k for k in bounds if k > last_k]
+        if cands:
+            k = min(cands, key=lambda k: abs(cum[k] - want))
+            off = abs(cum[k] - want)
+            # accept only if close overall AND the words since the last anchor fit the time spent
+            if off <= 0.18 * total and off <= 0.5 * (cum[k] - cum[last_k]):
+                anchors.append((k, a, b))
+    segs, k0, t0 = [], 0, s0
+    for k, a, b in anchors:
+        segs.append((k0, k, t0, a))
+        k0, t0 = k, b
+    segs.append((k0, len(toks), t0, s1))
+    out = []
+    for a_tok, b_tok, ta, tb in segs:
+        sw = sum(weights[a_tok:b_tok]) or 1.0
+        acc = 0.0
+        for j in range(a_tok, b_tok):
+            s = ta + (tb - ta) * acc / sw
+            acc += weights[j]
+            out.append((s, ta + (tb - ta) * acc / sw))
+    return out
+
+
 def narrate(voice, title, story):
-    """Returns (float audio @rate, rate, words[{w,s,e}], title_end_seconds)."""
+    """Speak the title, then each paragraph in one take (so intonation flows like a person
+    reading), with natural pauses between paragraphs.
+    Returns (float audio @rate, rate, words[{w,s,e,title}], title_end_seconds)."""
     voice.say("Hello.")  # sets voice.rate
     rate = voice.rate
-    pieces, words, t = [], [], 0.0
-    parts = [(s, False, True) for s, _ in split_sentences(title)]
-    parts += [(s, p, False) for s, p in split_sentences(story)]
-    title_end = 0.0
-    for i, (sent, para_end, is_title) in enumerate(parts):
-        audio, a0, a1 = speak(voice, sent)
-        toks = sent.split()
-        ws = word_weights(voice, toks)
-        span, acc = max(a1 - a0, 0.2), 0.0
-        for tok, wt in zip(toks, ws):
-            s = t + a0 + span * acc / sum(ws)
-            acc += wt
-            words.append({"w": tok, "s": s, "e": t + a0 + span * acc / sum(ws), "title": is_title})
+    pieces, words, t, title_end = [], [], 0.0, 0.0
+    blocks = [(speech_text(title), True)] + [(speech_text(p), False) for p in paragraphs(story)]
+    for text, is_title in blocks:
+        audio = voice.say(text)
+        toks = text.split()
+        for tok, (s, e) in zip(toks, align_words(audio, rate, toks, word_weights(voice, toks))):
+            words.append({"w": tok, "s": t + s, "e": t + e, "title": is_title})
         pieces.append(audio)
         t += len(audio) / rate
-        last_title = is_title and (i + 1 == len(parts) or not parts[i + 1][2])
-        gap = TITLE_GAP if last_title else (PARA_GAP if para_end else GAP)
-        if last_title:
+        gap = TITLE_GAP if is_title else PARA_GAP
+        if is_title:
             title_end = t + gap * 0.6
         pieces.append(np.zeros(int(gap * rate), dtype=np.float32))
         t += gap
