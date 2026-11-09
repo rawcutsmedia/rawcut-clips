@@ -7,11 +7,11 @@ Story video maker: turns a written scary story into a vertical narrated video.
 story.json: {"title": "...", "story": "paragraphs separated by blank lines"}
 
 What it does (all offline, no API keys):
-  1. Narrates the title, then the story, with the Piper "ryan-high" voice (downloaded once from
-     GitHub), slowed and pitched down with a little reverb for a creepy tone.
+  1. Narrates the title, then the story, with a natural Kokoro voice (config.json -> "story";
+     model downloaded once from GitHub). Piper is the fallback. No effects on the voice.
   2. Times every word (sentence audio is exact; words inside a sentence are spread by phoneme count).
   3. Lays it over a random stretch of Minecraft parkour from assets/gameplay/, darkened with a
-     vignette, plus a quiet generated drone underneath.
+     vignette. No background music or noise.
   4. Shows the title on a card while it is read, then big word-by-word captions (current word red).
   5. Writes <out>/<stamp>_<NN>_<slug>.mp4 and a matching .json sidecar for the morning job.
 """
@@ -36,13 +36,26 @@ WORK = Path(os.environ.get("CLIPKIT_WORK") or Path.home() / "rawcut-work")
 VOICE_DIR = WORK / "voices"
 VOICE_URL = "https://github.com/rhasspy/piper/releases/download/v0.0.2/voice-en-us-ryan-high.tar.gz"
 VOICE_FILE = VOICE_DIR / "en-us-ryan-high.onnx"
+KOKORO_DIR = WORK / "kokoro"
+KOKORO_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
+KOKORO_FILES = ("kokoro-v1.0.onnx", "voices-v1.0.bin")
 GAMEPLAY = Path(os.environ.get("STORY_GAMEPLAY") or ROOT / "assets" / "gameplay")
 FONT = ROOT / "fonts" / "Anton-Regular.ttf"
 W, H, FPS = 1080, 1920, 30      # design canvas (card, caption positions)
 OUT_W, OUT_H = 720, 1280        # encoded size
-PITCH = 0.93          # lower = deeper voice (tempo is restored, so timings don't move)
-PACE = 1.08           # piper length_scale: >1 = slower, more deliberate
+PACE = 1.08           # piper fallback only: length_scale >1 = slower
 GAP, PARA_GAP, TITLE_GAP = 0.28, 0.6, 0.7
+
+
+def story_settings():
+    """config.json -> "story": {"engine": "kokoro", "voice": "am_michael", "speed": 0.92}."""
+    try:
+        cfg = json.loads((ROOT / "config.json").read_text(encoding="utf-8")).get("story", {})
+    except Exception:
+        cfg = {}
+    return {"engine": cfg.get("engine", "kokoro"),
+            "voice": os.environ.get("STORY_VOICE") or cfg.get("voice", "am_michael"),
+            "speed": float(os.environ.get("STORY_SPEED") or cfg.get("speed", 0.92))}
 
 
 def ff():
@@ -67,6 +80,67 @@ def duration(path):
 
 
 # ----------------------------------------------------------------- voice
+
+class KokoroNarrator:
+    """Natural-sounding neural voice (Kokoro, Apache-2.0), model files from GitHub releases."""
+
+    def __init__(self, voice, speed):
+        KOKORO_DIR.mkdir(parents=True, exist_ok=True)
+        for f in KOKORO_FILES:
+            if not (KOKORO_DIR / f).exists():
+                print(f"downloading {f} (once)...", flush=True)
+                urllib.request.urlretrieve(KOKORO_URL + f, KOKORO_DIR / f)
+        try:
+            from kokoro_onnx import Kokoro
+        except ImportError:
+            subprocess.run([sys.executable, "-m", "pip", "install", "-q", "kokoro-onnx"], check=True)
+            from kokoro_onnx import Kokoro
+        self.k = Kokoro(str(KOKORO_DIR / KOKORO_FILES[0]), str(KOKORO_DIR / KOKORO_FILES[1]))
+        if voice not in self.k.get_voices():
+            sys.exit(f"unknown Kokoro voice {voice}; pick one of {sorted(self.k.get_voices())}")
+        self.voice, self.speed, self.rate = voice, speed, 24000
+
+    def say(self, sentence):
+        audio, self.rate = self.k.create(sentence, voice=self.voice, speed=self.speed, lang="en-us")
+        return np.asarray(audio, dtype=np.float32)
+
+    def weight(self, word):
+        try:
+            return len(re.sub(r"[ˈˌː\s.,!?]", "", self.k.tokenizer.phonemize(word, "en-us")))
+        except Exception:
+            return 0
+
+
+class PiperNarrator:
+    """Fallback voice (Piper ryan-high)."""
+
+    def __init__(self):
+        self.v = load_voice()
+        self.rate = self.v.config.sample_rate
+
+    def say(self, sentence):
+        from piper import SynthesisConfig
+        cfg = SynthesisConfig(length_scale=PACE)
+        return np.concatenate([c.audio_float_array for c in self.v.synthesize(sentence, syn_config=cfg)])
+
+    def weight(self, word):
+        try:
+            return sum(len(p) for p in self.v.phonemize(word))
+        except Exception:
+            return 0
+
+
+def get_narrator():
+    st = story_settings()
+    if st["engine"] == "kokoro":
+        try:
+            return KokoroNarrator(st["voice"], st["speed"])
+        except SystemExit:
+            raise
+        except Exception as e:  # keep the factory running if Kokoro can't load
+            print(f"Kokoro unavailable ({e}); falling back to Piper", flush=True)
+    return PiperNarrator()
+
 
 def load_voice():
     if not VOICE_FILE.exists():
@@ -95,10 +169,9 @@ def split_sentences(text):
     return out
 
 
-def speak(voice, sentence, rate):
-    from piper import SynthesisConfig
-    cfg = SynthesisConfig(length_scale=PACE)
-    audio = np.concatenate([c.audio_float_array for c in voice.synthesize(sentence, syn_config=cfg)])
+def speak(voice, sentence):
+    audio = voice.say(sentence)
+    rate = voice.rate
     loud = np.where(np.abs(audio) > 0.02 * (np.abs(audio).max() or 1))[0]
     s0, s1 = (loud[0], loud[-1]) if len(loud) else (0, len(audio) - 1)
     return audio, s0 / rate, s1 / rate
@@ -108,23 +181,20 @@ def word_weights(voice, words):
     ws = []
     for w in words:
         core = re.sub(r"[^\w'’-]", "", w) or w
-        try:
-            n = sum(len(p) for p in voice.phonemize(core))
-        except Exception:
-            n = 0
-        ws.append(max(n, len(core) * 0.8, 1))
+        ws.append(max(voice.weight(core), len(core) * 0.8, 1))
     return ws
 
 
 def narrate(voice, title, story):
     """Returns (float audio @rate, rate, words[{w,s,e}], title_end_seconds)."""
-    rate = voice.config.sample_rate
+    voice.say("Hello.")  # sets voice.rate
+    rate = voice.rate
     pieces, words, t = [], [], 0.0
     parts = [(s, False, True) for s, _ in split_sentences(title)]
     parts += [(s, p, False) for s, p in split_sentences(story)]
     title_end = 0.0
     for i, (sent, para_end, is_title) in enumerate(parts):
-        audio, a0, a1 = speak(voice, sent, rate)
+        audio, a0, a1 = speak(voice, sent)
         toks = sent.split()
         ws = word_weights(voice, toks)
         span, acc = max(a1 - a0, 0.2), 0.0
@@ -264,7 +334,7 @@ def cmd_make(a):
     tmp = WORK / "story_tmp" / slugify(title)
     tmp.mkdir(parents=True, exist_ok=True)
 
-    voice = load_voice()
+    voice = get_narrator()
     audio, rate, words, title_end = narrate(voice, title, text)
     total = len(audio) / rate + 1.2
     write_wav(tmp / "voice_raw.wav", audio, rate)
@@ -277,13 +347,8 @@ def cmd_make(a):
     (fonts / FONT.name).write_bytes(FONT.read_bytes())
 
     bg, bg_start, loop, credit = pick_background(total, rng)
-    voice_f = (f"[1:a]asetrate={rate}*{PITCH},aresample=44100,atempo={1 / PITCH:.4f},"
-               f"highpass=f=70,lowpass=f=7200,aecho=0.8:0.55:55|110:0.16|0.09,volume=1.7,apad[vo]")
-    amb_f = (f"anoisesrc=color=brown:amplitude=0.06:sample_rate=44100:d={total:.2f},lowpass=f=320[n];"
-             f"sine=f=55:sample_rate=44100:d={total:.2f},volume=0.05[s1];"
-             f"sine=f=58.2:sample_rate=44100:d={total:.2f},volume=0.04[s2];"
-             f"[n][s1][s2]amix=inputs=3:normalize=0,afade=t=in:d=1.5,"
-             f"afade=t=out:st={max(0, total - 2):.2f}:d=2,volume=9.0[amb]")
+    # Clean voice only: no pitch shifting, echo or background noise (they made it sound robotic).
+    voice_f = "[1:a]aresample=44100,highpass=f=60,loudnorm=I=-15:TP=-1.5:LRA=11,apad[a]"
     # Layout is designed at 1080x1920; the file is encoded at OUT_W x OUT_H (720p keeps files ~15 MB,
     # the gameplay is 720p anyway, and libass scales the captions from PlayRes automatically).
     k = OUT_W / W
@@ -307,7 +372,7 @@ def cmd_make(a):
     out = out_dir / f"{stamp}_{n:02d}_{slugify(title)}.mp4"
     bg_in = (["-stream_loop", "-1"] if loop else []) + ["-ss", f"{bg_start:.2f}", "-i", str(bg)]
     cmd = [ff(), "-y", "-v", "error", *bg_in, "-i", "voice_raw.wav", "-loop", "1", "-i", "card.png",
-           "-filter_complex", f"{vid_f};{voice_f};{amb_f};[vo][amb]amix=inputs=2:normalize=0:duration=first[a]",
+           "-filter_complex", f"{vid_f};{voice_f}",
            "-map", "[v]", "-map", "[a]", "-t", f"{total:.2f}",
            "-c:v", "libx264", "-preset", a.preset, "-crf", "23", "-maxrate", "1800k", "-bufsize", "3600k",
            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-ar", "44100",

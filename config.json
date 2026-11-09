@@ -51,5 +51,11 @@
     "max_clips_per_run": 10,
     "max_sources_per_run": 3,
     "try_youtube": false
+  },
+  "story": {
+    "engine": "kokoro",
+    "voice": "am_michael",
+    "speed": 0.92,
+    "_note": "Kokoro voices: am_michael (US male), af_heart (US female), bm_george (UK male), plus others. speed <1 = slower."
   }
 }

@@ -17,9 +17,9 @@ the number of posts, or the niche.
 
 ## How a video is made
 1. A story JSON (`stories/<date>/<NN>.json`: title + story) is written by the factory.
-2. `python tools/story_maker.py make <story.json>` narrates it offline (Piper "ryan-high" voice,
-   pitched down with reverb), times every word, picks a random stretch of gameplay from
-   `assets/gameplay/`, darkens it, adds a quiet drone, shows the title on a card, then captions.
+2. `python tools/story_maker.py make <story.json>` narrates it offline (Kokoro voice from `config.json`,
+   no effects), times every word, picks a random stretch of gameplay from
+   `assets/gameplay/`, darkens it, shows the title on a card, then captions.
 3. The `.mp4` and its `.json` land in `queue/`; the morning job posts them.
 
 Gameplay footage is free-to-use with credit (`assets/gameplay/credits.json`); every caption ends

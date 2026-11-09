@@ -27,8 +27,8 @@ choice, and report what you did in the final message and the email.
 Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue/` (3 × 5 = 15).
 1. `git pull --rebase origin main`, then `python scripts/ledger.py summary`. need = target −
    `queue_clips`, at most `factory.max_clips_per_run`. If need is 0, stop and say "Queue is full".
-2. Set up: `pip install -q piper-tts imageio-ffmpeg numpy pillow` and
-   `export CLIPKIT_WORK=$HOME/rawcut-work`. The narrator voice downloads from GitHub on first use.
+2. Set up: `pip install -q kokoro-onnx soundfile piper-tts imageio-ffmpeg numpy pillow` and
+   `export CLIPKIT_WORK=$HOME/rawcut-work`. The narrator voice (Kokoro, set in `config.json` → `story`) downloads from GitHub on first use.
 3. Read `tools/STORY_PROMPT.txt` (the writing rules), `insights.md` (what gets views), and the last
    60 lines of `stories/log.jsonl` (premises already used).
 4. Write `need` new stories as `stories/<YYYY-MM-DD>/<NN>.json`, following STORY_PROMPT exactly:
