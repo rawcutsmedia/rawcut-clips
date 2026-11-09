@@ -287,7 +287,14 @@ def cmd_make(a):
     # Layout is designed at 1080x1920; the file is encoded at OUT_W x OUT_H (720p keeps files ~15 MB,
     # the gameplay is 720p anyway, and libass scales the captions from PlayRes automatically).
     k = OUT_W / W
-    vid_f = (f"[0:v]scale={OUT_W}:{OUT_H}:force_original_aspect_ratio=increase,crop={OUT_W}:{OUT_H},fps={FPS},"
+    # Vary the background so videos cut from the same footage don't look alike: random mirror,
+    # zoom (0-18%) and crop position.
+    flip = "hflip," if rng.random() < 0.5 else ""
+    z = rng.uniform(1.0, 1.18)
+    zw, zh = int(OUT_W * z) // 2 * 2, int(OUT_H * z) // 2 * 2
+    rx, ry = rng.random(), rng.random()
+    vid_f = (f"[0:v]{flip}scale={zw}:{zh}:force_original_aspect_ratio=increase,"
+             f"crop={OUT_W}:{OUT_H}:(in_w-{OUT_W})*{rx:.2f}:(in_h-{OUT_H})*{ry:.2f},fps={FPS},"
              f"eq=brightness=-0.07:saturation=0.75:contrast=1.05,vignette=PI/3.2,setsar=1[bg];"
              f"[2:v]format=rgba,scale=iw*{k:.4f}:-1,"
              f"fade=t=out:st={max(0.1, title_end - 0.35):.2f}:d=0.35:alpha=1[card];"

@@ -129,7 +129,7 @@
       }
     },
     "scary-stories": {
-      "active": false,
+      "active": true,
       "name": "Scary stories (original, AI-narrated, Minecraft parkour background)",
       "paid": false,
       "platforms": [
