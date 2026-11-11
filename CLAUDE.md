@@ -164,8 +164,7 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
    **Every Sunday, as the very last step**, run `bash scripts/squash_history.sh`. It commits
    and pushes today's changes, then replaces the git history with one commit, so deleted videos
    stop taking up space. Don't skip it: without it the repo grows by about 1 GB a week. If it fails,
-   put the error under **Problems** in the email (it's sent before this step, so mention it the
-   next day).
+   say so with the error in your final message (that summary is sent to the user as a notification).
    On other days just commit and push to `main`.
 
 ## Never
