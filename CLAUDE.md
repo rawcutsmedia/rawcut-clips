@@ -160,10 +160,12 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
    **On the first Sunday of each month**, also refresh each active campaign's `hashtags` bank in
    `campaigns.json`. Search the web for this month's popular TikTok and YouTube Shorts hashtags in the
    campaign's niche. Add clearly relevant ones, drop tags `insights.md` shows doing badly, keep `always`
-   and `avoid` as they are, and update `researched`. Then squash git history so deleted videos stop
-   taking up space:
-   `git add -A && git commit -m "Evening <date>" ; git checkout --orphan squash && git add -A &&
-   git commit -m "Squash history <date>" && git push --force origin squash:main`.
+   and `avoid` as they are, and update `researched`.
+   **Every Sunday, as the very last step**, run `bash scripts/squash_history.sh`. It commits
+   and pushes today's changes, then replaces the git history with one commit, so deleted videos
+   stop taking up space. Don't skip it: without it the repo grows by about 1 GB a week. If it fails,
+   put the error under **Problems** in the email (it's sent before this step, so mention it the
+   next day).
    On other days just commit and push to `main`.
 
 ## Never
