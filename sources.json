@@ -1,0 +1,253 @@
+{
+ "_how_to_use": "Approved footage the clip factory cuts from. One entry per source video. The factory picks the highest-priority source that still has unused moments, records which time ranges it used (so moments are never repeated), and marks a source 'done' once its good moments are used up. To add footage for a new campaign, add entries with that campaign's key.",
+ "sources": [
+  {
+   "id": "boxabl-drive-folder",
+   "type": "drive_folder",
+   "campaign": "boxabl",
+   "label": "Boxabl official content Drive",
+   "url": "https://drive.google.com/drive/folders/14hsa8iKW0kFY9yAZBTsTUvxr_lgoGelk",
+   "priority": 0,
+   "status": "blocked",
+   "used_ranges": [],
+   "error": "folder listing failed: Failed to retrieve file url:\n\n\tCannot retrieve the public link of the file. You may need to change\n\tthe permission to 'Anyone with the link', or have had many accesses.\n\tCheck FAQ in https://github.com/wkentaro/gdown?tab=readme-ov-file#faq.\n\nYou may still be able to access the"
+  },
+  {
+   "id": "boxabl-enes",
+   "campaign": "boxabl",
+   "label": "Enes Yilmazer tour (15M views)",
+   "url": "https://youtu.be/8JMrfSFQdpo",
+   "priority": 1,
+   "status": "in_progress",
+   "used_ranges": [
+    [
+     2.0,
+     49.0
+    ],
+    [
+     457.6,
+     502.2
+    ],
+    [
+     580.2,
+     632.5
+    ],
+    [
+     733.6,
+     773.0
+    ],
+    [
+     893.5,
+     939.3
+    ],
+    [
+     213.4,
+     238.7
+    ]
+   ],
+   "pc_file": "Videos/Boxabl/8JMrfSFQdpo.mp4"
+  },
+  {
+   "id": "boxabl-orkun",
+   "campaign": "boxabl",
+   "label": "Orkun Isitmak (6.3M views)",
+   "url": "https://youtu.be/eS-fnedN2yI",
+   "priority": 1,
+   "status": "done",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/eS-fnedN2yI.mp4",
+   "error": "No English subtitles on the PC download (video is not in English), so no captions. Skipped."
+  },
+  {
+   "id": "boxabl-fazerug",
+   "campaign": "boxabl",
+   "label": "Faze Rug (4.7M views)",
+   "url": "https://youtu.be/uu5aORByttg",
+   "priority": 1,
+   "status": "in_progress",
+   "used_ranges": [
+    [
+     225.0,
+     260.2
+    ],
+    [
+     751.7,
+     782.6
+    ],
+    [
+     298.8,
+     326.0
+    ],
+    [
+     90.0,
+     125.9
+    ]
+   ],
+   "pc_file": "Videos/Boxabl/uu5aORByttg.mp4"
+  },
+  {
+   "id": "boxabl-graham",
+   "campaign": "boxabl",
+   "label": "Graham Stephan (3M views)",
+   "url": "https://youtu.be/0Cdqs2Q1Vis",
+   "priority": 1,
+   "status": "in_progress",
+   "used_ranges": [
+    [
+     0.0,
+     26.5
+    ],
+    [
+     70.7,
+     104.5
+    ],
+    [
+     119.3,
+     163.4
+    ],
+    [
+     393.1,
+     430.3
+    ],
+    [
+     545.3,
+     570.8
+    ]
+   ],
+   "pc_file": "Videos/Boxabl/0Cdqs2Q1Vis.mp4"
+  },
+  {
+   "id": "boxabl-airrack",
+   "campaign": "boxabl",
+   "label": "Airrack (2.3M views)",
+   "url": "https://youtu.be/7rX5cPQrx_s",
+   "priority": 1,
+   "status": "new",
+   "used_ranges": [],
+   "error": "Not downloaded on the PC (yt-dlp skipped it)."
+  },
+  {
+   "id": "boxabl-elon",
+   "campaign": "boxabl",
+   "label": "Elon Musk (Google Drive file)",
+   "url": "https://drive.google.com/file/d/1OnH2B5N-TaGyHqPdmT0uxdCeA-38FXry/view",
+   "priority": 1,
+   "status": "done",
+   "used_ranges": [],
+   "error": "Only 200s of podcast footage; no Boxabl home on screen and Happy Dad branding visible, so it breaks clip_rules. Nothing cut."
+  },
+  {
+   "id": "boxabl-casita-tour",
+   "campaign": "boxabl",
+   "label": "Boxabl Casita Tour (1.6M views)",
+   "url": "https://youtu.be/JbS_VhA0rRo",
+   "priority": 2,
+   "status": "in_progress",
+   "used_ranges": [
+    [
+     22.6,
+     54.4
+    ],
+    [
+     143.8,
+     170.7
+    ],
+    [
+     182.5,
+     215.6
+    ],
+    [
+     256.6,
+     286.3
+    ],
+    [
+     299.1,
+     325.6
+    ]
+   ],
+   "pc_file": "Videos/Boxabl/JbS_VhA0rRo.mp4"
+  },
+  {
+   "id": "boxabl-808",
+   "campaign": "boxabl",
+   "label": "808 (1.7M views)",
+   "url": "https://youtu.be/5Lo54Lx7MCU",
+   "priority": 2,
+   "status": "done",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/5Lo54Lx7MCU.mp4",
+   "error": "Audio is not English (subtitles are auto-translated), so captions and the US/UK audience rule do not fit. Skipped."
+  },
+  {
+   "id": "boxabl-ellie",
+   "campaign": "boxabl",
+   "label": "Ellie in Space (1.3M views)",
+   "url": "https://youtu.be/KrahQlLAz44",
+   "priority": 2,
+   "status": "new",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/KrahQlLAz44.mp4"
+  },
+  {
+   "id": "boxabl-irina",
+   "campaign": "boxabl",
+   "label": "Irina Dee (904K views)",
+   "url": "https://youtu.be/3plLxp_7Jlo",
+   "priority": 2,
+   "status": "new",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/3plLxp_7Jlo.mp4"
+  },
+  {
+   "id": "boxabl-nyse",
+   "campaign": "boxabl",
+   "label": "NYSE interview",
+   "url": "https://youtu.be/Cz9cwL_fqTI",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/Cz9cwL_fqTI.mp4"
+  },
+  {
+   "id": "boxabl-factory-1",
+   "campaign": "boxabl",
+   "label": "Factory update series #1",
+   "url": "https://youtu.be/IBV7eIH3Bdw",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/IBV7eIH3Bdw.mp4"
+  },
+  {
+   "id": "boxabl-factory-2",
+   "campaign": "boxabl",
+   "label": "Factory update series #2",
+   "url": "https://youtu.be/b9erzF6LHKI",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/b9erzF6LHKI.mp4"
+  },
+  {
+   "id": "boxabl-factory-3",
+   "campaign": "boxabl",
+   "label": "Factory update series #3",
+   "url": "https://youtu.be/9ThVUNGj3To",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/9ThVUNGj3To.mp4"
+  },
+  {
+   "id": "boxabl-factory-4",
+   "campaign": "boxabl",
+   "label": "Factory update series #4",
+   "url": "https://youtu.be/rUArr8SWyf8",
+   "priority": 3,
+   "status": "new",
+   "used_ranges": [],
+   "pc_file": "Videos/Boxabl/rUArr8SWyf8.mp4"
+  }
+ ],
+ "_pc_footage": "YouTube blocks cloud downloads, so these videos were downloaded once on the user's PC into Videos/Boxabl (pc_file, with <id>.en.vtt subtitles). A session linked to the PC cuts lossless pieces there, stages them, and renders with tools/clipkit.py (captions from the .vtt via --words vtt)."
+}

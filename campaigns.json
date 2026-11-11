@@ -1,0 +1,197 @@
+{
+  "_how_to_use": "Each clip in queue/ must name a campaign key from this file (in its .json sidecar, field 'campaign'). Clips with no valid, active campaign are NOT posted. Add one entry per Whop/Vyro campaign you join. 'organic' is only for content you own or have explicit permission to post.",
+  "campaigns": {
+    "organic": {
+      "active": true,
+      "name": "Organic (no paid campaign)",
+      "paid": false,
+      "platforms": [
+        "tiktok",
+        "youtube",
+        "instagram"
+      ],
+      "required_text": [],
+      "voiceover_allowed": true,
+      "notes": "Only for content you own or have explicit permission to post. No #ad."
+    },
+    "example-whop-campaign": {
+      "active": false,
+      "name": "Example: Whop campaign name",
+      "paid": true,
+      "submit_where": "Whop Content Rewards dashboard",
+      "rate_per_1k": 1.0,
+      "platforms": [
+        "tiktok",
+        "youtube",
+        "instagram"
+      ],
+      "required_text": [
+        "#ad"
+      ],
+      "required_mentions": [],
+      "min_seconds": 8,
+      "max_seconds": 59,
+      "voiceover_allowed": false,
+      "notes": "Copy the campaign's rules here (required sound, tags, banned edits). Set active to true once you've joined."
+    },
+    "boxabl": {
+      "active": false,
+      "name": "Boxabl Official Clipping (Clip Farm, Whop Content Rewards)",
+      "paid": true,
+      "submit_where": "contentrewards.com -> Boxabl Official Clipping -> Submit clip",
+      "rate_per_1k": 0.5,
+      "min_payout_per_post": 1.0,
+      "max_payout_per_post": 500.0,
+      "platforms": [
+        "tiktok",
+        "youtube",
+        "instagram"
+      ],
+      "required_text": [
+        "#ad"
+      ],
+      "required_mentions": [
+        "@boxabl"
+      ],
+      "min_seconds": 12,
+      "max_seconds": 59,
+      "voiceover_allowed": true,
+      "caption_rules": [
+        "Tag @boxabl in every caption (TikTok, Instagram, YouTube).",
+        "Caption must be about Boxabl: the Casita, foldable homes, or the factory.",
+        "Spell the brand BOXABL correctly (all caps is fine).",
+        "Positive tone toward Boxabl, its product and featured talent.",
+        "Never mention Boxabl stock, shares, investing in Boxabl, or any ticker symbol.",
+        "No engagement bait, no politics or controversy."
+      ],
+      "clip_rules": [
+        "Only Boxabl-approved footage (sources.json). Never use clips of Kanye.",
+        "Show the whole Boxabl home at some point, not only close-up details.",
+        "Brand must be clear: the on-screen hook title must contain the word BOXABL (or Boxabl must be said in the clip).",
+        "Hook in the first 2 seconds; bold captions for muted viewing (ClipKit adds these).",
+        "Real edits only (captions, cuts, hooks) - never a raw rip. Vary moments; never repeat the same moment.",
+        "Positive moments only: the unfolding, the space, the price/value wow, the factory scale, celebrity reactions.",
+        "No other brands' watermarks; avoid moments dominated by another brand's logo or sponsor read."
+      ],
+      "payment_notes": "Pays only if at least 40% of the clip's audience is US/UK/CA/AUS. 'Share audience demographics' is required when submitting. Up to $500 per clip.",
+      "notes": "Optional: Boxabl affiliate program at boxabl.com/affiliate.",
+      "caption_fixes": "boxable=BOXABL,boxal=BOXABL,boxbool=BOXABL,box ball=BOXABL,box bable=BOXABL,box book=BOXABL,box school=BOXABL,bucks will=BOXABL,box full=BOXABL,box flexible=BOXABL,cita=Casita,casino=Casita,galliano=Galiano,box w=BOXABL,ca=Casita,boxall=BOXABL",
+      "hashtags": {
+        "always": [
+          "#ad",
+          "#boxabl"
+        ],
+        "core": [
+          "#tinyhouse",
+          "#tinyhome",
+          "#tinyliving",
+          "#tinyhousemovement",
+          "#adu"
+        ],
+        "by_topic": {
+          "home tour / inside the Casita": [
+            "#hometour",
+            "#tinyhousedesign"
+          ],
+          "price / value / affordability": [
+            "#affordablehousing",
+            "#realestate"
+          ],
+          "factory / how it's built": [
+            "#factorytour",
+            "#howitsmade"
+          ],
+          "folding / unfolding / shipping": [
+            "#prefabhome",
+            "#modularhome"
+          ],
+          "Elon Musk moments": [
+            "#elonmusk"
+          ],
+          "housing crisis / big vision": [
+            "#housingcrisis"
+          ],
+          "design / finishes / kitchen / bathroom": [
+            "#homedesign",
+            "#interiordesign"
+          ]
+        },
+        "youtube_only": [
+          "#shorts"
+        ],
+        "avoid": [
+          "#fyp",
+          "#foryou",
+          "#viral",
+          "#boxable"
+        ],
+        "researched": "2026-10-19"
+      }
+    },
+    "scary-stories": {
+      "active": true,
+      "name": "Scary stories (original, AI-narrated, Minecraft parkour background)",
+      "paid": false,
+      "platforms": [
+        "tiktok",
+        "youtube",
+        "instagram"
+      ],
+      "required_text": [],
+      "required_mentions": [],
+      "min_seconds": 45,
+      "max_seconds": 170,
+      "voiceover_allowed": false,
+      "caption_rules": [
+        "Line 1 hooks with the story's scariest unanswered question or the wrong detail from the title. Never spoil the ending.",
+        "It's fiction: never say 'true story', 'this really happened', or that it came from Reddit or a real person.",
+        "End the caption with the clip's gameplay credit exactly as given in `credit` (e.g. 'Gameplay: Orbital - No Copyright Gameplay').",
+        "No gore words, no real people, brands or real tragedies."
+      ],
+      "hashtags": {
+        "always": [
+          "#scarystories"
+        ],
+        "core": [
+          "#horrorstory",
+          "#creepy",
+          "#horrortok",
+          "#scary",
+          "#creepypasta",
+          "#storytime"
+        ],
+        "by_topic": {
+          "ghost, haunting, presence": [
+            "#paranormal",
+            "#ghoststory"
+          ],
+          "neighbors, strangers, home, devices": [
+            "#creepyencounters"
+          ],
+          "woods, camping, roads": [
+            "#horrorstories"
+          ],
+          "night shift, rules, jobs": [
+            "#nightshift"
+          ],
+          "gameplay background": [
+            "#minecraftparkour"
+          ]
+        },
+        "youtube_only": [
+          "#shorts"
+        ],
+        "avoid": [
+          "#fyp",
+          "#foryou",
+          "#viral",
+          "#truestory",
+          "#reddit",
+          "#redditstories"
+        ],
+        "researched": "2026-10-28"
+      },
+      "notes": "Fully automated: the nightly factory writes original stories (tools/STORY_PROMPT.txt) and renders them with tools/story_maker.py. Not a paid campaign: income comes from TikTok Creator Rewards / YouTube Partner Program once the accounts qualify."
+    }
+  }
+}

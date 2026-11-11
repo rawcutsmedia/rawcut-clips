@@ -1,0 +1,61 @@
+{
+  "timezone": "America/New_York",
+  "test_mode": false,
+  "buffer": {
+    "organization_id": "6ad639a2de0f08ea4b18d4a9",
+    "channels": {
+      "tiktok": "6ad639df778b240e2f5a180e",
+      "youtube": "6ad639f6778b240e2f5a18c0",
+      "instagram": null
+    },
+    "max_scheduled_per_channel": 9
+  },
+  "clips_per_day": 5,
+  "slots": {
+    "tiktok": [
+      "07:00",
+      "13:00",
+      "18:00",
+      "20:30",
+      "22:00"
+    ],
+    "youtube": [
+      "07:30",
+      "12:30",
+      "16:30",
+      "19:30",
+      "21:30"
+    ],
+    "instagram": [
+      "09:00",
+      "12:00",
+      "17:45",
+      "19:45",
+      "21:15"
+    ]
+  },
+  "youtube_category_id": "24",
+  "max_clip_seconds": 59,
+  "max_file_mb": 95,
+  "raw_base_url": "https://raw.githubusercontent.com/rawcutsmedia/rawcut-clips/main/",
+  "voiceover": {
+    "enabled": false,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Puck",
+    "style": "energetic, confident short-form video narrator, fast pace",
+    "duck_volume": 0.22
+  },
+  "cleanup_after_days": 2,
+  "factory": {
+    "min_queue_days": 3,
+    "max_clips_per_run": 10,
+    "max_sources_per_run": 3,
+    "try_youtube": false
+  },
+  "story": {
+    "engine": "kokoro",
+    "voice": "am_michael",
+    "speed": 1.0,
+    "_note": "Kokoro voices: am_michael (US male), af_heart (US female), bm_george (UK male), plus others. speed <1 = slower."
+  }
+}
