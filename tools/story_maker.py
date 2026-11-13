@@ -7,9 +7,11 @@ Story video maker: turns a written scary story into a vertical narrated video.
 story.json: {"title": "...", "story": "paragraphs separated by blank lines"}
 
 What it does (all offline, no API keys):
-  1. Narrates the title, then the story, with a natural Kokoro voice (config.json -> "story";
-     model downloaded once from GitHub). Piper is the fallback. No effects on the voice.
-  2. Times every word (sentence audio is exact; words inside a sentence are spread by phoneme count).
+  1. Narrates the title, then each paragraph in one take, with a natural Kokoro voice
+     (config.json -> "story"; model downloaded once from GitHub; Piper is the fallback), paced like
+     a storyteller: real pauses at punctuation, a beat before the last line, which is read slower.
+     A light "narrator mic" EQ and compression, no effects or noise.
+  2. Times every word from the model's own phoneme timings (exact caption sync).
   3. Lays it over a random stretch of Minecraft parkour from assets/gameplay/, darkened with a
      vignette. No background music or noise.
   4. Shows the title on a card while it is read, then big word-by-word captions (current word red).
@@ -36,8 +38,10 @@ WORK = Path(os.environ.get("CLIPKIT_WORK") or Path.home() / "rawcut-work")
 VOICE_DIR = WORK / "voices"
 VOICE_URL = "https://github.com/rhasspy/piper/releases/download/v0.0.2/voice-en-us-ryan-high.tar.gz"
 VOICE_FILE = VOICE_DIR / "en-us-ryan-high.onnx"
-KOKORO_DIR = WORK / "kokoro"
-KOKORO_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
+# model-files-v1.1 is the same Kokoro v1.0 voice, exported so it reports when every sound is spoken
+# (exact caption timing, and pauses placed exactly at punctuation).
+KOKORO_DIR = WORK / "kokoro-v1.1"
+KOKORO_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/"
 KOKORO_FILES = ("kokoro-v1.0.onnx", "voices-v1.0.bin")
 GAMEPLAY = Path(os.environ.get("STORY_GAMEPLAY") or ROOT / "assets" / "gameplay")
 FONT = ROOT / "fonts" / "Anton-Regular.ttf"
@@ -48,14 +52,17 @@ GAP, PARA_GAP, TITLE_GAP = 0.28, 0.5, 0.7
 
 
 def story_settings():
-    """config.json -> "story": {"engine": "kokoro", "voice": "am_michael", "speed": 0.92}."""
+    """config.json -> "story": {"engine": "kokoro", "voice": "am_michael", "speed": 0.94,
+    "sentence_pause": 0.42, "clause_pause": 0.16}. A voice can be a blend: "am_michael*0.7+am_fenrir*0.3"."""
     try:
         cfg = json.loads((ROOT / "config.json").read_text(encoding="utf-8")).get("story", {})
     except Exception:
         cfg = {}
     return {"engine": cfg.get("engine", "kokoro"),
             "voice": os.environ.get("STORY_VOICE") or cfg.get("voice", "am_michael"),
-            "speed": float(os.environ.get("STORY_SPEED") or cfg.get("speed", 0.92))}
+            "speed": float(os.environ.get("STORY_SPEED") or cfg.get("speed", 0.94)),
+            "sentence_pause": float(cfg.get("sentence_pause", 0.42)),
+            "clause_pause": float(cfg.get("clause_pause", 0.16))}
 
 
 def ff():
@@ -84,7 +91,7 @@ def duration(path):
 class KokoroNarrator:
     """Natural-sounding neural voice (Kokoro, Apache-2.0), model files from GitHub releases."""
 
-    def __init__(self, voice, speed):
+    def __init__(self, voice, speed, sentence_pause=0.42, clause_pause=0.16):
         KOKORO_DIR.mkdir(parents=True, exist_ok=True)
         for f in KOKORO_FILES:
             if not (KOKORO_DIR / f).exists():
@@ -93,22 +100,48 @@ class KokoroNarrator:
         try:
             from kokoro_onnx import Kokoro
         except ImportError:
-            subprocess.run([sys.executable, "-m", "pip", "install", "-q", "kokoro-onnx"], check=True)
+            subprocess.run([sys.executable, "-m", "pip", "install", "-q", "kokoro-onnx==0.6.1"], check=True)
             from kokoro_onnx import Kokoro
         self.k = Kokoro(str(KOKORO_DIR / KOKORO_FILES[0]), str(KOKORO_DIR / KOKORO_FILES[1]))
-        if voice not in self.k.get_voices():
-            sys.exit(f"unknown Kokoro voice {voice}; pick one of {sorted(self.k.get_voices())}")
-        self.voice, self.speed, self.rate = voice, speed, 24000
+        self.style = self._voice(voice)
+        self.name, self.speed, self.rate = voice, speed, 24000
+        self.sentence_pause, self.clause_pause = sentence_pause, clause_pause
+        self.timed = bool(getattr(self.k, "has_timings", False)) and hasattr(self.k, "create_timed")
 
-    def say(self, sentence):
-        audio, self.rate = self.k.create(sentence, voice=self.voice, speed=self.speed, lang="en-us")
+    def _voice(self, spec):
+        """"am_michael" or a blend like "am_michael*0.7+am_fenrir*0.3"."""
+        parts = []
+        for p in spec.split("+"):
+            name, _, w = p.strip().partition("*")
+            if name not in self.k.get_voices():
+                sys.exit(f"unknown Kokoro voice {name}; pick from {sorted(self.k.get_voices())}")
+            parts.append((name, float(w or 1)))
+        if len(parts) == 1:
+            return parts[0][0]
+        tot = sum(w for _, w in parts)
+        return sum(self.k.get_voice_style(n) * (w / tot) for n, w in parts).astype(np.float32)
+
+    def say(self, sentence, speed=None):
+        audio, self.rate = self.k.create(sentence, voice=self.style, speed=speed or self.speed, lang="en-us")
         return np.asarray(audio, dtype=np.float32)
 
-    def weight(self, word):
+    def say_timed(self, text, speed=None):
+        """One take of `text` -> (audio, [(start, end) per whitespace token]) from the model's own
+        timings, with pauses lengthened at sentence and clause marks so it breathes like a reader."""
+        audio, self.rate, spoken = self.k.create_timed(
+            text, voice=self.style, speed=speed or self.speed, lang="en-us",
+            sentence_pause=self.sentence_pause, clause_pause=self.clause_pause)
+        audio = np.asarray(audio, dtype=np.float32)
+        return audio, map_word_times(text.split(), spoken, self.phonemes, len(audio) / self.rate)
+
+    def phonemes(self, word):
         try:
-            return len(re.sub(r"[ˈˌː\s.,!?]", "", self.k.tokenizer.phonemize(word, "en-us")))
+            return self.k.tokenizer.phonemize(word, "en-us")
         except Exception:
-            return 0
+            return ""
+
+    def weight(self, word):
+        return len(re.sub(r"[ˈˌː\s.,!?]", "", self.phonemes(word)))
 
 
 class PiperNarrator:
@@ -134,7 +167,7 @@ def get_narrator():
     st = story_settings()
     if st["engine"] == "kokoro":
         try:
-            return KokoroNarrator(st["voice"], st["speed"])
+            return KokoroNarrator(st["voice"], st["speed"], st["sentence_pause"], st["clause_pause"])
         except SystemExit:
             raise
         except Exception as e:  # keep the factory running if Kokoro can't load
@@ -292,22 +325,125 @@ def align_words(audio, rate, toks, weights):
     return out
 
 
-def narrate(voice, title, story):
+PUNCT = set(".,!?;:…—–-\"“”'‘’()")
+STRESS = set("ˈˌː")
+
+
+def _sounds(ph):
+    """Space-separated phoneme words that contain at least one real sound."""
+    return [g for g in ph.split() if any(c not in PUNCT and c not in STRESS for c in g)]
+
+
+def map_word_times(toks, spoken, phonemize, length):
+    """Turn the model's per-phoneme timings into (start, end) for each text token.
+    Each word is phonemized on its own and its sounds are matched against the sounds the model
+    actually spoke (espeak runs short words together, e.g. "on the" -> "ɔnðə", so word counts
+    alone don't line up). Words with no matched sound are placed between their neighbours."""
+    import difflib
+    flat = [t for t in spoken if t.phoneme not in PUNCT and t.phoneme not in STRESS
+            and not t.phoneme.isspace()]
+    if not flat:
+        return [(0.0, length)] * len(toks)
+    exp, owner = [], []
+    for i, w in enumerate(toks):
+        for ch in "".join(_sounds(phonemize(re.sub(r"[^\w'’-]", "", w) or w))):
+            if ch not in STRESS:
+                exp.append(ch)
+                owner.append(i)
+    got = [t.phoneme for t in flat]
+    hit = [[] for _ in toks]
+    sm = difflib.SequenceMatcher(None, exp, got, autojunk=False)
+    for a, b, n in sm.get_matching_blocks():
+        for j in range(n):
+            hit[owner[a + j]].append(b + j)
+    out = [(flat[min(h)].start, flat[max(h)].end) if h else None for h in hit]
+    # fill words that matched nothing: share the gap between the neighbours
+    i = 0
+    while i < len(out):
+        if out[i] is not None:
+            i += 1
+            continue
+        j = i
+        while j < len(out) and out[j] is None:
+            j += 1
+        lo = out[i - 1][1] if i > 0 else flat[0].start
+        hi = out[j][0] if j < len(out) else flat[-1].end
+        step = max(hi - lo, 0.05 * (j - i)) / (j - i)
+        for k in range(i, j):
+            out[k] = (lo + (k - i) * step, lo + (k - i + 1) * step)
+        i = j
+    # keep it monotonic (a mismatch must never send a caption backwards)
+    fixed, t_prev = [], 0.0
+    for s, e in out:
+        s = max(s, t_prev)
+        e = max(e, s + 0.05)
+        fixed.append((s, e))
+        t_prev = s
+    return fixed
+
+
+def merge_punct_tokens(text):
+    """Glue stand-alone punctuation ("word — word") onto the word before it, so every token is a word."""
+    toks = []
+    for t in text.split():
+        if toks and not re.search(r"\w", t):
+            toks[-1] += t
+        else:
+            toks.append(t)
+    return " ".join(toks)
+
+
+def delivery(blocks, base, rng):
+    """How a storyteller would read each block: (speed, pause after). The last short line is read
+    slower after a long beat; one-line paragraphs get a beat after them; questions and trailing
+    lines hold longer; the middle drifts a little so it never sounds metronomic."""
+    plan = []
+    n = len(blocks)
+    for i, (text, is_title) in enumerate(blocks):
+        words = len(text.split())
+        last = i == n - 1
+        nxt_is_last = i == n - 2
+        if is_title:
+            speed, gap = base * 0.98, 0.85
+        elif last and words <= 10:
+            speed, gap = base * 0.86, 0.0
+        elif i == 1:
+            speed, gap = base * 0.97, 0.6
+        else:
+            speed, gap = base * rng.uniform(0.98, 1.03), rng.uniform(0.5, 0.65)
+        if not is_title and words <= 6 and not last:
+            speed, gap = min(speed, base * 0.93), max(gap, 0.75)
+        if text.rstrip("\"”'’").endswith(("?", "…", "...")):
+            gap = max(gap, 0.75)
+        if nxt_is_last:
+            gap = 1.05
+        plan.append((max(0.5, min(2.0, speed)), gap))
+    return plan
+
+
+def narrate(voice, title, story, rng=None):
     """Speak the title, then each paragraph in one take (so intonation flows like a person
-    reading), with natural pauses between paragraphs.
+    reading), pacing each block like a storyteller (see delivery()).
     Returns (float audio @rate, rate, words[{w,s,e,title}], title_end_seconds)."""
+    rng = rng or random.Random(0)
     voice.say("Hello.")  # sets voice.rate
     rate = voice.rate
     pieces, words, t, title_end = [], [], 0.0, 0.0
-    blocks = [(speech_text(title), True)] + [(speech_text(p), False) for p in paragraphs(story)]
-    for text, is_title in blocks:
-        audio = voice.say(text)
+    blocks = [(merge_punct_tokens(speech_text(title)), True)] + \
+             [(merge_punct_tokens(speech_text(p)), False) for p in paragraphs(story)]
+    timed = getattr(voice, "timed", False)
+    base = getattr(voice, "speed", 1.0)
+    for (text, is_title), (speed, gap) in zip(blocks, delivery(blocks, base, rng)):
         toks = text.split()
-        for tok, (s, e) in zip(toks, align_words(audio, rate, toks, word_weights(voice, toks))):
+        if timed:
+            audio, times = voice.say_timed(text, speed)
+        else:
+            audio = voice.say(text, speed) if isinstance(voice, KokoroNarrator) else voice.say(text)
+            times = align_words(audio, rate, toks, word_weights(voice, toks))
+        for tok, (s, e) in zip(toks, times):
             words.append({"w": tok, "s": t + s, "e": t + e, "title": is_title})
         pieces.append(audio)
         t += len(audio) / rate
-        gap = TITLE_GAP if is_title else PARA_GAP
         if is_title:
             title_end = t + gap * 0.6
         pieces.append(np.zeros(int(gap * rate), dtype=np.float32))
@@ -437,7 +573,7 @@ def cmd_make(a):
     tmp.mkdir(parents=True, exist_ok=True)
 
     voice = get_narrator()
-    audio, rate, words, title_end = narrate(voice, title, text)
+    audio, rate, words, title_end = narrate(voice, title, text, rng)
     total = len(audio) / rate + 1.2
     write_wav(tmp / "voice_raw.wav", audio, rate)
 
@@ -449,8 +585,13 @@ def cmd_make(a):
     (fonts / FONT.name).write_bytes(FONT.read_bytes())
 
     bg, bg_start, loop, credit = pick_background(total, rng)
-    # Clean voice only: no pitch shifting, echo or background noise (they made it sound robotic).
-    voice_f = "[1:a]aresample=44100,highpass=f=60,loudnorm=I=-15:TP=-1.5:LRA=11,apad[a]"
+    # No pitch shifting, echo or background noise (they made it sound robotic). Instead a light
+    # "narrator mic" chain: a little low-end warmth, softer sibilants and gentle compression, so it
+    # sounds like a person close to a microphone rather than a synthesizer.
+    voice_f = ("[1:a]aresample=44100,highpass=f=70,"
+               "equalizer=f=150:t=q:w=0.9:g=2.5,equalizer=f=6500:t=q:w=1.5:g=-2,lowpass=f=12000,"
+               "acompressor=threshold=-21dB:ratio=2.2:attack=10:release=150:makeup=1.5,"
+               "loudnorm=I=-15:TP=-1.5:LRA=9,apad[a]")
     # Layout is designed at 1080x1920; the file is encoded at OUT_W x OUT_H (720p keeps files ~15 MB,
     # the gameplay is 720p anyway, and libass scales the captions from PlayRes automatically).
     k = OUT_W / W

@@ -56,6 +56,8 @@
     "engine": "kokoro",
     "voice": "am_michael",
     "speed": 1.0,
-    "_note": "Kokoro voices: am_michael (US male), af_heart (US female), bm_george (UK male), plus others. speed <1 = slower."
+    "sentence_pause": 0.42,
+    "clause_pause": 0.16,
+    "_note": "Kokoro voices: am_michael (US male), am_fenrir (deeper US male), am_puck, bm_george (UK male), af_heart (US female). Blends work: \"am_michael*0.6+am_fenrir*0.4\". speed <1 = slower. sentence_pause / clause_pause = minimum seconds of silence after . ! ? and , ; :"
   }
 }

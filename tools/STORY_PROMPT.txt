@@ -1,49 +1,125 @@
-HOW TO WRITE A RAWCUT SCARY STORY (read this every time before writing)
+HOW TO WRITE A RAWCUT SCARY STORY (read all of this every time before writing)
 
-Goal: an ORIGINAL first-person scary story that keeps a stranger watching to the last line of a
-65-95 second vertical video. Narrated by a slow, deep voice over Minecraft parkour.
+Goal: a stranger scrolling past stops in the first two seconds and can't put the phone down until
+the last line. Original first-person horror fiction, read by a calm male narrator over Minecraft
+parkour, 65-90 seconds. Thrilling, not just creepy: something is coming, and it gets closer.
 
 OUTPUT: one JSON file per story:
   {"title": "...", "story": "...", "premise": "one line, for the repeat log", "theme": "..."}
   Paragraphs in "story" are separated by a blank line (\n\n). Plain text only.
 
+THE TITLE (read aloud first, shown on the title card: it is the hook)
+- 8-16 words, one or two short sentences. First: an ordinary situation. Second: the one detail
+  that is wrong, specific and impossible to ignore. It must plant a question the viewer needs
+  answered. A deadline or a direct threat makes it stronger.
+- Good: "I plow highways on the night shift. Dispatch just asked who's riding in my truck."
+- Good: "Someone put up missing posters with my face on them. They say I disappear tonight."
+- Bad: "Something weird happened at my job" (vague). "My roommate was a ghost all along"
+  (spoils the twist). "A terrifying night in the woods" (a label, not a detail).
+
+THE FIRST LINE (the second hook, around second six)
+- Drop straight into a frightening moment: a sound, a sight or a line of dialogue, mid-action.
+  No backstory, no dates, no "so this happened", no "I've lived here for three years".
+- Good: "The knocking started again just after two, and this time it came from under the bed."
+- Then give only the context the listener needs, and the stakes: why the narrator is alone,
+  what they can't do, what happens if they get it wrong.
+
+THE ENGINE: ESCALATE, NEVER COAST
+- Something new and worse happens every two or three sentences (about every ten seconds). Each
+  beat is an event, not a feeling: the sound moves closer, a message arrives, a rule breaks, the
+  thing speaks, the narrator finds proof.
+- End every paragraph on a pull: a new detail, an unanswered question, or a decision ("So I
+  opened it."). The listener should need the next paragraph.
+- Open loops: raise a question early and answer it late.
+- Let the narrator act. Give them a choice and let it raise the stakes. A passive narrator who
+  only notices things is boring.
+- A ticking clock adds pressure: a time something will happen, a battery dying, a door that
+  opens at dawn.
+- This is an audio story, so sound is the best scare: knocking, breathing, a whisper, a familiar
+  voice from the wrong place, the narrator's own name. One or two short lines from the threat,
+  in quotes, are worth more than any description. Keep them simple and wrong.
+
+THE TWIST AND THE LAST LINE
+- Plant a small detail in the first third that sounds like scenery. The reveal turns that detail
+  into something terrible. It has to land in one listen, with a jolt, so people rewatch to catch
+  the plant.
+- The final line is its own paragraph, 2-8 words, and it lands like a door slamming. Best kinds:
+  the threat speaks; one detail flips the whole story; the threat is now right next to the
+  narrator. No moral, no explanation, no "I moved out the next day", no "it was a dream", no
+  "to this day I don't know".
+- If you can, make the end echo the title or the first line, so the video feels like it loops.
+
+WRITE FOR THE VOICE (the narrator is a synthetic voice; this is what makes it sound human)
+- Talk like a scared person telling a friend: contractions (I'd, didn't, it's), plain words,
+  short sentences. Average about nine words a sentence. Mix in three-to-five word punches, and one
+  or two longer, rolling sentences when the tension builds.
+- Fragments are good: "Two knocks. Then nothing." Questions are good: "Who turned the light off?"
+- Commas where a speaker would breathe. An ellipsis (…) at most twice per story, for hesitation.
+- Numbers and times as words, the way people say them: "just after two in the morning",
+  "eleven forty", "room two-fourteen", "forty dollars". No digits, symbols, emojis,
+  abbreviations, ALL CAPS, parentheses or lists in the story. (The title may say "3 AM" or
+  "11:40"; the narrator reads those correctly.)
+- No stats, tech jargon or long names. Every sentence should be easy to say in one breath.
+
 LENGTH
-- story: 170-230 words. Title + story together must narrate in 65-95 seconds. TikTok only pays for
-  videos over 1 minute, so never go under 170 words.
-- title: 10-22 words, written like a confession post: first person, ordinary setting, one detail
-  that is wrong. It's read aloud first, so it is the hook.
-  Good: "My smart doorbell keeps recording someone knocking at 3 AM. The footage shows an empty porch."
-  Good: "I took a night job watching an empty parking garage. Rule 4 says never count the cars."
-  Bad: "A scary story about a haunted house" (vague), anything that gives away the twist.
+- story: 160-210 words in 6-10 short paragraphs, plus the title. That narrates in about 65-90
+  seconds. Under 61 seconds earns nothing on TikTok; past 95 seconds people leave.
 
-STRUCTURE
-1. Line 1 restates the hook as a concrete, specific moment (a time, a place, an object).
-2. Three escalating beats. Each one makes the wrong detail worse. Keep sentences short.
-3. A reveal that reframes everything, set up by an early detail the listener half-forgot.
-4. End on a short final line, 2-6 words, alone in its own paragraph. Leave the reader with the
-   threat still in the room. No moral, no explanation, no "and that's why I never...".
+TIMING MAP
+- 0-6 s: the title, the hook question.
+- 6-15 s: the first line drops into the moment, then the stakes.
+- 15-55 s: three escalating beats, each paragraph ending on a pull; the narrator acts.
+- 55-80 s: the worst moment and the reveal that reuses the planted detail.
+- Last 3 s: the final line.
 
-STYLE
-- Ordinary, believable life: apartments, night shifts, babysitting the house (not kids in danger),
-  road trips, hiking, smart homes, voicemails, roommates, neighbors, hotel jobs, group chats.
-- Concrete details beat adjectives ("the porch light was off, and I always leave it on" beats
-  "it was terrifying"). Show, don't tell. No "suddenly", no "little did I know".
-- Write for the ear, the way a person would say it out loud: "just after three in the morning",
-  "room two-fourteen", "twenty-two dollars". No digits, symbols, emojis, abbreviations, ALL CAPS,
-  parentheses or long lists. Vary sentence length so it flows: mix short punches with longer
-  sentences joined by commas. Use dialogue sparingly, in quotes.
-- Creepy and tense, never graphic. PG-13: dread, wrongness, presence. No gore, no injuries in
-  detail, no self-harm or suicide, no sexual content, no children being hurt, no animals hurt,
-  no real crimes or real tragedies, no real people, brands or real named places, no slurs,
-  nothing hateful about any group.
+CONTENT RULES (non-negotiable)
+- Tense, thrilling and creepy, never graphic. PG-13: dread, presence, chase, near-miss. No gore,
+  no detailed injuries, no self-harm or suicide, no sexual content, no children harmed or in
+  danger, no animals hurt, no real crimes or tragedies, no real people, brands or named real
+  places, no slurs, nothing hateful about any group, no real religious or cultural figures as
+  monsters.
+- It is fiction. Never copy or retell a real Reddit post, a creepypasta, a film or a book. Invent
+  it. Never claim it's true, never mention Reddit, a subreddit or a real user.
 
-IT IS FICTION
-- Never copy or retell a real Reddit post, a creepypasta, a film or a book. Invent it.
-- Never claim it's true, never say it was posted on Reddit, never name a subreddit or a real user.
-
-VARIETY (check stories/log.jsonl first)
-- Don't reuse a premise, monster type or twist from the last 60 entries.
-- Rotate themes: rules-for-a-job, home intrusion that isn't a person, wrong number or voicemail,
-  smart device/camera, neighbor, road or hiking, hotel or night shift, mirror or photo,
-  sleep or memory, roommate or family member who isn't quite right.
+VARIETY (check the last 60 lines of stories/log.jsonl first)
+- Don't reuse a premise, monster type, twist or setting from the log, or the examples above.
+- Rotate themes. Good ones: rules for a job; something using a family member's voice; a text or
+  call from your own number; a door or room that shouldn't exist; a missing poster or photo of
+  the narrator; house or pet sitting; rideshare, delivery or tow truck at night; a night shift at
+  a gas station, pool, ice rink or radio station; lake, woods, cave or snowstorm; a smart device,
+  camera or app; a neighbor or new roommate who isn't right; lost time or sleepwalking; a time
+  loop; an emergency call; a small-town tradition.
+- Mix the kind of threat: a presence, a mimic, a rule, the narrator's own body or mind, a copy of
+  the narrator. Vary the narrator's job and setting. No two stories in a batch start the same way.
 - If insights.md says some themes or title styles get more views, write more of those.
+
+SELF-CHECK BEFORE SAVING (rewrite until every answer is yes)
+1. Would the title alone stop your thumb?
+2. Does the first story sentence put you inside a frightening moment?
+3. Does something new and worse happen at least every three sentences?
+4. Does every paragraph end with a reason to keep listening?
+5. Does the narrator make a choice that raises the stakes?
+6. Does the twist reuse a detail planted early, and land in one listen?
+7. Is the final line 2-8 words, alone in its paragraph, and does it hit?
+8. Is it 160-210 words, with no digits in the story, and easy to read aloud?
+
+EXAMPLE (for rhythm and structure only; never reuse this premise)
+Title: I lock up an indoor pool every night at ten. The cameras show someone swimming laps at 3 AM.
+
+The pool lights were off. But on the camera, the water was moving. One slow lap after another, in a lane with nobody in it.
+
+I'm the only one with a key. The door log said nobody came in after I locked up. So the next night, I stayed.
+
+I sat in the dark office, the camera monitor glowing in front of me, and watched the water through the glass.
+
+At three exactly, I heard it. Splash. Kick. Splash. Kick. Steady as a clock. Then it stopped.
+
+Wet footprints came across the tile, one at a time, right up to my window. Then a knock. Two knuckles, soft.
+
+"Lifeguard," a man said, close to the glass. "I think I'm in trouble."
+
+My hand was already on the door handle when I glanced at the monitor. The deck camera showed my window from outside. Nobody was standing there. Just footprints, stopping at the glass.
+
+Then I looked at the other feed. The one in the corner of my office.
+
+Something tall was standing behind my chair, dripping.

@@ -27,15 +27,18 @@ choice, and report what you did in the final message and the email.
 Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue/` (3 × 5 = 15).
 1. `git pull --rebase origin main`, then `python scripts/ledger.py summary`. need = target −
    `queue_clips`, at most `factory.max_clips_per_run`. If need is 0, stop and say "Queue is full".
-2. Set up: `pip install -q kokoro-onnx soundfile piper-tts imageio-ffmpeg numpy pillow` and
+2. Set up: `pip install -q kokoro-onnx==0.6.1 soundfile piper-tts imageio-ffmpeg numpy pillow` and
    `export CLIPKIT_WORK=$HOME/rawcut-work`. The narrator voice (Kokoro, set in `config.json` → `story`) downloads from GitHub on first use.
+   Keep kokoro-onnx pinned to 0.6.1: story_maker uses its word timings.
 3. Read `tools/STORY_PROMPT.txt` (the writing rules), `insights.md` (what gets views), and the last
    60 lines of `stories/log.jsonl` (premises already used).
 4. Write `need` new stories as `stories/<YYYY-MM-DD>/<NN>.json`, following STORY_PROMPT exactly:
-   - original fiction, 170–230 words, a 10–22 word hook title, and a short final line;
+   - original fiction, 160–210 words, an 8–16 word hook title, and a final line of 2–8 words;
+   - thrilling, not just creepy: a frightening first line, something worse every few sentences,
+     every paragraph ending on a pull, and a twist built on a detail planted early;
    - every story a different theme and premise, none repeating the log.
-   Then reread each one. Rewrite it if it is under 170 words, gives the twist away in the title, or
-   breaks a content rule.
+   Then run STORY_PROMPT's self-check on each one and rewrite it until every answer is yes. Also
+   rewrite it if it is under 160 words, gives the twist away in the title, or breaks a content rule.
 5. Render each story:
    `python tools/story_maker.py make stories/<date>/<NN>.json --out queue` (about 1.5 minutes each;
    run them in the background with a single command when there are several). It prints JSON with
