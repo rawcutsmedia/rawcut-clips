@@ -192,6 +192,80 @@
         "researched": "2026-10-28"
       },
       "notes": "Fully automated: the nightly factory writes original stories (tools/STORY_PROMPT.txt) and renders them with tools/story_maker.py. Not a paid campaign: income comes from TikTok Creator Rewards / YouTube Partner Program once the accounts qualify."
+    },
+    "gta6-template": {
+      "active": false,
+      "name": "TEMPLATE: GTA VI streamer campaign (copy to gta6-<streamer>, fill in from the campaign page)",
+      "kind": "stream",
+      "paid": true,
+      "streamer": "Streamer display name",
+      "twitch": "twitch_login_name",
+      "campaign_url": "https://contentrewards.com/c/campaigns/...",
+      "submit_where": "contentrewards.com -> the campaign -> Submit (within the campaign's time limit after posting)",
+      "rate_per_1k": 1.0,
+      "min_payout_per_post": null,
+      "max_payout_per_post": null,
+      "platforms": [
+        "tiktok_gta"
+      ],
+      "required_text": [
+        "#ad"
+      ],
+      "required_mentions": [],
+      "min_seconds": 8,
+      "max_seconds": 60,
+      "voiceover_allowed": false,
+      "facecam": null,
+      "disclosure_badge": "#AD",
+      "game_filter": "Grand Theft Auto VI",
+      "caption_rules": [
+        "Tag the streamer's handle and say where they stream (e.g. 'live on Twitch').",
+        "No story spoilers in the hook or the first second.",
+        "Copy any other caption rule from the campaign page here."
+      ],
+      "clip_rules": [
+        "Only this streamer's own stream clips (the brief is the permission).",
+        "Only GTA VI gameplay moments unless the brief allows other content.",
+        "Reject clips that are mostly in-game radio music, menus, loading screens or other creators' content.",
+        "Copy any other clip rule from the campaign page here (length, layout, banned edits)."
+      ],
+      "hashtags": {
+        "always": [
+          "#ad",
+          "#gta6"
+        ],
+        "core": [
+          "#gtavi",
+          "#gta",
+          "#gaming",
+          "#twitch",
+          "#streamer",
+          "#gtaclips"
+        ],
+        "by_topic": {
+          "funny / fail": [
+            "#gamingfunny"
+          ],
+          "chase / police": [
+            "#gta6gameplay"
+          ],
+          "reaction": [
+            "#twitchclips"
+          ]
+        },
+        "youtube_only": [
+          "#shorts"
+        ],
+        "avoid": [
+          "#fyp",
+          "#foryou",
+          "#viral",
+          "#gta6leak",
+          "#gta6free"
+        ],
+        "researched": "2026-11-16"
+      },
+      "notes": "Delete fields you don't need. 'twitch' is the channel login the PC downloader uses. 'facecam' is X,Y,W,H in the source video (set by the GTA clip job the first time it sees the stream layout)."
     }
   }
 }

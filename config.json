@@ -6,7 +6,8 @@
     "channels": {
       "tiktok": "6ad639df778b240e2f5a180e",
       "youtube": "6ad639f6778b240e2f5a18c0",
-      "instagram": null
+      "instagram": null,
+      "tiktok_gta": null
     },
     "max_scheduled_per_channel": 9
   },
@@ -32,6 +33,12 @@
       "17:45",
       "19:45",
       "21:15"
+    ],
+    "tiktok_gta": [
+      "12:00",
+      "15:00",
+      "18:00",
+      "21:00"
     ]
   },
   "youtube_category_id": "24",
@@ -59,5 +66,12 @@
     "sentence_pause": 0.42,
     "clause_pause": 0.16,
     "_note": "Kokoro voices: am_michael (US male), am_fenrir (deeper US male), am_puck, bm_george (UK male), af_heart (US female). Blends work: \"am_michael*0.6+am_fenrir*0.4\". speed <1 = slower. sentence_pause / clause_pause = minimum seconds of silence after . ! ? and , ; :"
+  },
+  "gta": {
+    "_note": "GTA VI streamer clips. tiktok_gta = the GTA-only TikTok (fill in its Buffer channel id once connected). Clips are downloaded on the user's computer each evening (CLAUDE.md 'GTA clip job').",
+    "pc_folder": null,
+    "clips_per_channel_per_streamer": 3,
+    "min_source_views": 50,
+    "min_queue_days": 1
   }
 }

@@ -85,12 +85,21 @@ def main():
                and r.get("due_at") and datetime.fromisoformat(r["due_at"]) <= now]
         print(json.dumps(due, indent=2))
     elif a.cmd == "summary":
-        queue = sorted(p.name for p in (ROOT / "queue").glob("*.mp4"))
+        queue, gta = [], []
+        for p in sorted((ROOT / "queue").glob("*.mp4")):
+            try:
+                kind = json.loads(p.with_suffix(".json").read_text(encoding="utf-8")).get("kind")
+            except Exception:
+                kind = None
+            (gta if kind == "stream" else queue).append(p.name)
         counts = {}
         for r in rows:
             counts[r.get("status")] = counts.get(r.get("status"), 0) + 1
         per_day = max(1, int(cfg.get("clips_per_day", 2)))
+        gta_day = max(1, len(cfg.get("slots", {}).get("tiktok_gta", [])))
+        # queue_clips = stories (what the story factory tops up); GTA stream clips are counted apart
         print(json.dumps({"queue_clips": len(queue), "queue_days_left": round(len(queue) / per_day, 1),
+                          "gta_queue_clips": len(gta), "gta_days_left": round(len(gta) / gta_day, 1),
                           "post_status_counts": counts}, indent=2))
     elif a.cmd == "stats":
         camps = json.loads((ROOT / "campaigns.json").read_text(encoding="utf-8"))["campaigns"]
