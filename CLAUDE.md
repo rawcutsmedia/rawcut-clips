@@ -284,8 +284,9 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    Add one line to the email: the single biggest lesson so far.
 7. Cleanup: `python scripts/cleanup.py` deletes videos whose posts all finished more than
    `cleanup_after_days` ago (Buffer has already uploaded them to the platforms).
-   **On Sundays only**, first update `insights.md` from `python scripts/ledger.py stats --days 14`. Keep it
-   to 15 lines or fewer:
+   **On Sundays only, and only while stories are not paused**, first update the `## Scary stories`
+   section of `insights.md` from `python scripts/ledger.py stats --days 14` (leave the GTA section
+   alone). Keep that section to 15 lines or fewer:
    - which story themes, title styles, posting times and hashtags (`hashtag_avg_views`) got the most
      views and which got the fewest;
    - then 3–5 concrete rules for the next week.
