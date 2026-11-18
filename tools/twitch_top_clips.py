@@ -38,6 +38,10 @@ def ensure(mod, pkg):
         return __import__(mod)
     except ImportError:
         subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--user", pkg], check=False)
+        import importlib
+        import site
+        site.addsitedir(site.getusersitepackages())  # a fresh --user install isn't on sys.path yet
+        importlib.invalidate_caches()
         try:
             return __import__(mod)
         except ImportError:
