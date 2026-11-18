@@ -10,8 +10,6 @@ choice, and report what you did in the final message and the email.
 - Buffer organization: "My organization", id `6ad639a2de0f08ea4b18d4a9` (Free plan).
 - Channel IDs are in `config.json` → `buffer.channels`. Platforms with `null` are not connected; skip them.
   - TikTok `@mediarawcut`, YouTube "Raw Cut Media". Instagram not connected yet.
-  - `tiktok_gta`: a separate GTA-only TikTok for GTA VI streamer clips (`null` until the user
-    connects it to Buffer; then put its channel id here).
 - Timezone: `America/New_York`. Every `dueAt` must carry the correct offset (EDT -04:00 / EST -05:00);
   `scripts/next_slots.py` already does this.
 - Buffer Free plan: max 10 scheduled posts per channel. Never go over `max_scheduled_per_channel`.
@@ -23,8 +21,9 @@ choice, and report what you did in the final message and the email.
   instead of scheduling them. Never change `test_mode` yourself.
 - Active campaign: `scary-stories` (not paid; no #ad). `boxabl` is retired (`active: false`).
 - GTA VI streamer campaigns (from contentrewards.com) are `gta6-<streamer>` entries with
-  `kind: "stream"`, `paid: true` and `platforms: ["tiktok_gta"]`; `gta6-template` shows the fields.
-  Only the user can join a campaign or submit links on Content Rewards.
+  `kind: "stream"` and `paid: true`; `gta6-template` shows the fields. Active now: `gta6-clix`
+  (Clix GTA VI marathon pool), posted on the main `@mediarawcut` TikTok by the **GTA clip job**
+  (evening), which also submits each link on Content Rewards. The morning job never posts them.
 - Background gameplay lives in `assets/gameplay/` with credits in `assets/gameplay/credits.json`.
   It's free-to-use footage that requires credit. Never delete it.
 
@@ -60,11 +59,9 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
 1. `git pull --rebase origin main`.
 2. Read `config.json` and `campaigns.json`.
 3. List `queue/*.mp4`, oldest first (by filename). If there are none, stop and say so.
-4. Work out which clips are allowed. Each connected channel in `buffer.channels` gets at most one
-   clip per slot in `slots.<channel>` per day. A clip goes to every connected channel named in its
-   campaign's `platforms`: stories go to `tiktok` and `youtube` (5 a day, every story to both);
-   GTA stream clips (sidecar `kind: "stream"`) go only to `tiktok_gta` (4 a day). If `tiktok_gta`
-   is not connected yet, leave stream clips in the queue.
+4. Work out which clips are allowed, up to `clips_per_day` (currently 5, so one clip per slot;
+   every clip goes to every connected platform in its campaign's `platforms`). **Skip GTA stream
+   clips** (sidecar `kind: "stream"`): the GTA clip job posts those in the evening.
    - The clip's sidecar `queue/<same name>.json` names a `campaign`. If the sidecar or the campaign
      is missing, or the campaign isn't `active`, **don't post it**. Leave it in the queue and list it
      as "needs a campaign" in your summary.
@@ -78,8 +75,7 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
    `ai_generated`, `credit` and `warnings`. If it fails, leave the clip and report the error.
 7. `git add -A && git commit -m "Stage clips <date>" && git push origin HEAD:main`.
    Optionally check `curl -sI <raw_url>` for HTTP 200. If the network blocks it, carry on.
-8. `python scripts/next_slots.py --count <most clips going to one channel>` gives the next free
-   times per channel.
+8. `python scripts/next_slots.py --count <number of clips>` gives the next free times per platform.
 9. Before creating posts, call Buffer `list_posts` (organizationId above, status `scheduled`,
    per channel). Skip a platform if it would exceed `max_scheduled_per_channel`.
 10. For each clip and each connected platform in the campaign's `platforms`, create one Buffer post
@@ -88,7 +84,6 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
       `dueAt` from step 8, `assets: [{"video": {"url": "<raw_url>"}}]`,
       plus `saveToDraft: true` when `test_mode` is true.
     - TikTok: `text` = TikTok caption; `metadata.tiktok.isAiGenerated` = the `ai_generated` value.
-    - `tiktok_gta`: same as TikTok, with its own `channelId` (stream clips: `isAiGenerated` false).
     - YouTube: `text` = description; `metadata.youtube` =
       `{"title": "<YouTube title>", "categoryId": "<config.youtube_category_id>", "privacy": "public",
       "madeForKids": false, "isAiGenerated": <ai_generated>}`.
@@ -132,21 +127,25 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
   `#ad` first for paid campaigns only, then the campaign's `always` tags, a `core` tag, the rest,
   and `#shorts` last.
 - GTA stream clips: start the caption with `#ad` (the disclosure must come first), then the hook:
-  the clip's `title` reworded, or the wildest or funniest moment in `transcript`. Never spoil GTA VI
-  story missions and never promise something the clip doesn't show. Add every `required_text`,
-  `required_mentions` and `caption_rules` item (usually: tag the streamer and say they're live on
-  Twitch). No credit line.
+  the clip's `title` reworded, or the wildest or funniest moment in `transcript`, with the
+  streamer's name in it (for Clix: the word "Clix" must be in the caption). Never spoil GTA VI
+  story missions, never portray the streamer negatively, never promise something the clip doesn't
+  show. Add every `required_text` item exactly as written (e.g. `#Clix` with its capital C, even
+  though other hashtags are lowercase), every `required_mentions` item and every `caption_rules`
+  item. English only. No credit line. `isAiGenerated` is always false for stream clips.
 
 ## GTA clip job (evening, uses the user's computer)
 Downloads the streamers' most-viewed Twitch clips on the user's computer (Twitch is blocked in the
-cloud) and edits them into vertical clips for `tiktok_gta`. Runs unattended.
+cloud), edits them into vertical clips, posts them on the main `@mediarawcut` TikTok and submits
+each link on Content Rewards within 30 minutes. Runs unattended; the user does nothing.
 1. `git pull --rebase origin main`. Active GTA campaigns are the `campaigns.json` entries with
    `kind: "stream"` and `active: true`; each names a `twitch` login. If there are none, stop and say
-   "No active GTA campaigns yet."
-2. need = `gta.min_queue_days` × the number of `slots.tiktok_gta` − stream clips already in `queue/`
-   (sidecar `kind: "stream"`). If need ≤ 0, stop and say "GTA queue is full".
+   "No active GTA campaigns yet." Read every `clip_rules` and `caption_rules` item first: one
+   rule break (above all anything AI-generated) can ban the account from every Reach campaign.
+2. Tonight's target = `gta.clips_per_night`. Stream clips already in `queue/` (sidecar
+   `kind: "stream"`) that still meet the rules count toward it; make new ones for the rest.
 3. Reach the computer with `get_device_info`. If it can't be reached, stop and say so in one plain
-   line ("Your computer wasn't on with the Claude app open, so no new GTA clips tonight").
+   line ("Your computer wasn't on with the Claude app open, so no GTA clips tonight").
    Folder: `gta.pc_folder` in config.json. If it's null, use `RawcutGTA` inside the first connected
    folder (`mkdir -p`) and save that absolute path in config.json.
 4. On the computer with `device_bash` (each call must finish within 45 s; use `timeout 40`; use
@@ -166,27 +165,57 @@ cloud) and edits them into vertical clips for `tiktok_gta`. Runs unattended.
    `pip install -q sherpa-onnx soundfile imageio-ffmpeg numpy pillow`,
    `export CLIPKIT_WORK=$HOME/rawcut-work`, and run
    `python tools/stream_clips.py assemble <staged manifest.json>`.
-6. For each ready clip, most views first, until `need` clips are made:
+6. For each ready clip, most views first, until the target is reached:
    - `python tools/stream_clips.py frame <path>` and look at the PNG. Skip the clip unless it shows
-     the campaign's `game_filter` in real gameplay (not menus, loading screens, another game or
-     another creator's content) and breaks no `clip_rules`.
+     the campaign's `game_filter` in real gameplay from the campaign's period (not menus, loading
+     screens, another game or another creator's content), the streamer is the main focus, and it
+     breaks no `clip_rules`.
    - If the campaign's `facecam` is null: if the stream shows a webcam, read its box in the PNG (X,Y,W,H
      in pixels of the source size `frame` prints) and save it as `"facecam": [X, Y, W, H]`;
      with no webcam save `"facecam": []` (blurred layout).
-   - `python tools/stream_clips.py transcript <path>`. Skip clips with no real moment.
+   - `python tools/stream_clips.py transcript <path>`. Skip clips with no real moment, and clips
+     where the streamer comes off badly.
    - Write the on-screen hook: 3–8 words that make someone stop scrolling (the wildest or funniest
-     moment, a question, the streamer's reaction). No GTA VI story spoilers, nothing the clip
-     doesn't show.
+     moment, a question, the streamer's reaction), with the streamer's name in it (e.g. "Clix
+     can't stop crashing"). Positive or neutral about the streamer. No GTA VI story spoilers,
+     nothing the clip doesn't show.
    - `python tools/stream_clips.py make <path> --campaign <key> --hook "<hook>" --clip-id <id>
      --clip-title "<twitch title>" --clip-url <url> --views <views> --streamer "<streamer>"`.
      Use `--start`/`--end` (seconds) to cut a slow start or a dead ending, staying within the
      campaign's `min_seconds`/`max_seconds`.
 7. Quality check every new clip: frames at 1.5 s and the midpoint (`-ss <t> -i <video> -frames:v 1`).
-   Hook readable, `#AD` badge visible for paid campaigns, webcam not cut off, captions readable.
-   Delete a broken clip and its `.json`.
-8. `git add queue streams campaigns.json config.json && git commit -m "GTA clips: <n>" &&
-   git push origin HEAD:main`.
-9. Final message: clips added (streamer, hook, length, Twitch views) and the GTA queue total.
+   Hook readable and naming the streamer, webcam not cut off, captions readable, no added logo or
+   badge (unless the campaign sets `disclosure_badge`). Delete a broken clip and its `.json`.
+8. Stage and post them now, on the channel in `gta.post_channel` (`tiktok` = `@mediarawcut`):
+   - `python scripts/prepare_clip.py queue/<file>.mp4` for each clip, then
+     `git add -A && git commit -m "GTA clips <date>" && git push origin HEAD:main` (the raw URL must
+     exist before Buffer fetches it). Check `curl -sI <raw_url>` returns 200 if the network allows.
+   - Buffer `list_posts` (status `scheduled`) for that channel: stay within
+     `max_scheduled_per_channel`, and keep every GTA post at least 10 minutes away from a scheduled
+     story post.
+   - `create_post` for each clip: `schedulingType: "automatic"`, `mode: "customScheduled"`, the
+     first `dueAt` about 5 minutes from now, then `gta.spacing_minutes` apart; `assets` = the
+     `raw_url` video; `text` = the caption (Caption rules → GTA stream clips);
+     `metadata.tiktok.isAiGenerated: false`. Never `saveToDraft` unless `test_mode` is true (then
+     stop after drafting; nothing to submit).
+   - Record each post: `python scripts/ledger.py add --platform tiktok --post-id <id> --due-at <dueAt>
+     --media <media_path> --campaign <key> --title "<hook>" --tags "<hashtags>" --status scheduled`.
+9. Submit each link on Content Rewards within `submit_within_minutes` (30) of its post going live:
+   - Wait until its `dueAt` (use a background `sleep` or Monitor; never a foreground sleep), then
+     call Buffer `get_post` every 2 minutes until it is sent and has the public TikTok link
+     (`externalLink` / `serviceLink`). Give up on a post after 20 minutes and list it as a problem.
+   - Open the campaign's `campaign_url` in the browser on the user's computer: the Claude desktop
+     app's built-in browser (Claude_Browser tools), or Claude in Chrome if that's the one available.
+     Both keep the user's Content Rewards / Whop login. Use the campaign's submit button, paste the
+     TikTok link, choose TikTok if asked, submit, and read back the confirmation on the page.
+   - Then `python scripts/ledger.py update --post-id <id> --status sent --link <url> --submitted`.
+   - Submit only clips made for that campaign, each link once. Never submit a story video.
+   - If no browser is available or it isn't signed in, don't stop the job: put every unsubmitted
+     link at the top of the final message as "Submit now: <link> → <campaign_url>" (the final
+     message reaches the user's phone), and say which one-time step is missing.
+10. `git add -A && git commit -m "GTA posts <date>" && git push origin HEAD:main`.
+11. Final message (it is sent to the user's phone): first any links that still need submitting,
+    then clips posted (hook, time, Twitch views, submitted yes/no), clips skipped and why.
 
 ## Evening job (daily report)
 1. `git pull --rebase origin main`.
@@ -206,9 +235,9 @@ cloud) and edits them into vertical clips for `tiktok_gta`. Runs unattended.
 5. Send **one** plain-text email with the Gmail connector to the recipient named in the run prompt:
    - Subject: `Rawcut daily: <n> live, <views> views this week` (add `[TEST MODE]` when test_mode is
      true)
-   - **Submit these links**: only for campaigns with `paid: true`, grouped by campaign → platform,
-     with link, title and posted time. Leave this section out when there are none (stories are
-     unpaid, so there is nothing to submit).
+   - **Submit these links**: only paid-campaign posts whose ledger row has `submitted: false`,
+     grouped by campaign → platform, with link, title and posted time. Leave this section out when
+     there are none. (The GTA clip job submits its own links; list how many it submitted.)
    - **Today's posts**: platform, title, link.
    - **Views (last 7 days)**: total views, and the top 3 posts with their views. For paid campaigns
      only, also give posts over the minimum payout and estimated earnings, labelled as an estimate.
@@ -247,3 +276,5 @@ cloud) and edits them into vertical clips for `tiktok_gta`. Runs unattended.
 - Never present a story as true, as a real Reddit post, or as about a real person.
 - Never delete or move files on the user's computer.
 - Never post a GTA clip for a streamer without an active `gta6-*` campaign for that streamer.
+- Never submit a story video (AI-narrated) to a streamer campaign, and never add AI voice or AI
+  visuals to a stream clip: campaigns like Reach ban accounts for AI content.

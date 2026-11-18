@@ -6,6 +6,7 @@ Post ledger (log/posts.jsonl): one line per Buffer post.
          --campaign KEY --title "..." [--status scheduled|draft|error] [--error "..."]
   python scripts/ledger.py pending        # posts whose time has passed but have no final status
   python scripts/ledger.py update --post-id ID --status sent [--link URL] [--error "..."]
+         [--submitted]   # the link was submitted on Content Rewards
   python scripts/ledger.py summary        # counts + queue size
 """
 import argparse
@@ -46,6 +47,7 @@ def main():
     u.add_argument("--link")
     u.add_argument("--error")
     u.add_argument("--views", type=int)
+    u.add_argument("--submitted", action="store_true", help="link submitted on Content Rewards")
     sub.add_parser("pending")
     sub.add_parser("summary")
     s = sub.add_parser("stats", help="views + estimated earnings for recent sent posts")
@@ -77,6 +79,9 @@ def main():
                         r[k] = v
                 if a.views is not None:
                     r["views_at"] = now.isoformat(timespec="seconds")
+                if a.submitted:
+                    r["submitted"] = True
+                    r["submitted_at"] = now.isoformat(timespec="seconds")
                 r["checked_at"] = now.isoformat(timespec="seconds")
         write(rows)
         print("updated" if hit else "post id not found")
@@ -96,7 +101,7 @@ def main():
         for r in rows:
             counts[r.get("status")] = counts.get(r.get("status"), 0) + 1
         per_day = max(1, int(cfg.get("clips_per_day", 2)))
-        gta_day = max(1, len(cfg.get("slots", {}).get("tiktok_gta", [])))
+        gta_day = max(1, int(cfg.get("gta", {}).get("clips_per_night", 4)))
         # queue_clips = stories (what the story factory tops up); GTA stream clips are counted apart
         print(json.dumps({"queue_clips": len(queue), "queue_days_left": round(len(queue) / per_day, 1),
                           "gta_queue_clips": len(gta), "gta_days_left": round(len(gta) / gta_day, 1),
