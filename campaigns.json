@@ -292,7 +292,12 @@
       "min_seconds": 10,
       "max_seconds": 45,
       "voiceover_allowed": false,
-      "facecam": null,
+      "facecam": [
+        6,
+        198,
+        316,
+        173
+      ],
       "disclosure_badge": "",
       "game_filter": "Grand Theft Auto VI",
       "caption_rules": [
@@ -359,7 +364,8 @@
         "x"
       ],
       "submit_within_minutes": 30,
-      "min_total_views_to_count": 400000
+      "min_total_views_to_count": 400000,
+      "facecam_note": "Webcam box in 1280x720 source frames for his usual desk overlay (seen 2026-11-17). Crop only the camera image: the JBL / sub-count / CODE CLIX overlays around it are logos and must stay out. If the marathon layout differs, re-detect and update."
     }
   }
 }

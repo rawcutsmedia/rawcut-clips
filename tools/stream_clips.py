@@ -139,6 +139,25 @@ def words_of(video):
 
 # ------------------------------------------------------------------ captions
 
+# Strong swearing and slurs are masked in on-screen captions (TikTok limits reach on them and
+# campaigns reject hateful text). The audio is untouched.
+_MASK = re.compile(
+    r"(?i)^(\W*)(mother)?("
+    r"f+u+c+k+(?:s|ed|er|ers|ing|in|in'|ery)?|f+k+|sh+i+t+(?:s|ty|ting|head|heads)?|"
+    r"b+i+t+c+h+(?:es|y|ing)?|d+i+c+k+(?:s|head|heads)?|c+u+m+(?:s|ming|rag)?|c+u+n+t+s?|"
+    r"p+u+s+s+y+|a+s+s+h+o+l+e+s?|n+i+g+g+(?:a|as|er|ers|uh)?|f+a+g+(?:s|got|gots)?|"
+    r"r+e+t+a+r+d+(?:s|ed)?|w+h+o+r+e+s?|s+l+u+t+s?"
+    r")(\W*)$")
+
+
+def mask_word(w):
+    m = _MASK.match(w)
+    if not m:
+        return w
+    core = (m.group(2) or "") + m.group(3)
+    return m.group(1) + core[0] + "*" * (len(core) - 1) + m.group(4)
+
+
 def build_ass(words, hook, cap_y, title_y, dur, badge):
     head = f"""[Script Info]
 ScriptType: v4.00+
@@ -168,7 +187,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     for ci, ch in enumerate(chunks):
         nxt = chunks[ci + 1][0]["s"] if ci + 1 < len(chunks) else dur
         ch_end = nxt if nxt - ch[-1]["e"] < 0.6 else min(ch[-1]["e"] + 0.3, nxt)
-        toks = [ck.clean_word(w) for w in ch]
+        toks = [ck.ass_escape(re.sub(r"[^\w'?!%$&/*-]", "", mask_word(w["w"]).upper())) for w in ch]
         for j, w in enumerate(ch):
             s = ch[0]["s"] if j == 0 else w["s"]
             e = ch[j + 1]["s"] if j + 1 < len(ch) else ch_end

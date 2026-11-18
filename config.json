@@ -62,12 +62,14 @@
   },
   "gta": {
     "_note": "GTA VI streamer clips (Clix pool) post on the main @mediarawcut TikTok right after the evening download, and the evening job submits each link on Content Rewards itself (CLAUDE.md 'GTA clip job').",
-    "pc_folder": null,
-    "clips_per_channel_per_streamer": 3,
-    "min_source_views": 50,
+    "pc_folder": "C:\\Users\\Declan\\Videos\\RawcutGTA",
+    "clips_per_channel_per_streamer": 6,
+    "min_source_views": 20,
     "min_queue_days": 1,
     "post_channel": "tiktok",
     "clips_per_night": 4,
-    "spacing_minutes": 15
+    "spacing_minutes": 15,
+    "pc_folder_bash": "~/mnt/Videos/RawcutGTA",
+    "windows_task": "Rawcut GTA clips (daily 7:20 PM, Python 3.13, runs pc_gta_daily.py)"
   }
 }

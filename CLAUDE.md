@@ -151,35 +151,33 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    `kind: "stream"`) that still meet the rules count toward it; make new ones for the rest.
 3. Reach the computer with `get_device_info`. If it can't be reached, stop and say so in one plain
    line ("Your computer wasn't on with the Claude app open, so no GTA clips tonight").
-   Folder: `gta.pc_folder` in config.json. If it's null, use `RawcutGTA` inside the first connected
-   folder (`mkdir -p`) and save that absolute path in config.json.
-4. On the computer with `device_bash` (each call must finish within 45 s; use `timeout 40`; use
-   `python3`, or `python` if that's what exists):
-   - `mkdir -p "<pc_folder>/inbox"`, then download the script:
-     `python3 -c "import urllib.request as u; u.urlretrieve('https://raw.githubusercontent.com/rawcutsmedia/rawcut-clips/main/tools/twitch_top_clips.py', '<pc_folder>/twitch_top_clips.py')"`
-   - Write the output of `python tools/stream_clips.py used` (run here) to `<pc_folder>/used.json`.
-   - First call: `cd "<pc_folder>" && timeout 40 python3 twitch_top_clips.py --channels <twitch
-     logins, comma-separated> --out inbox --per-channel <gta.clips_per_channel_per_streamer>
-     --min-views <gta.min_source_views> --skip used.json --new-batch --max-new 1`.
-   - Then the same command without `--new-batch`, once per call, until it prints `"done": true`
-     (stop after 25 calls). If every channel errors (no network, no Python), stop and report the
-     exact error in the final message.
-   - Never delete or move anything on the computer. The script overwrites its own parts.
-5. Stage `inbox/manifest.json` and every part it lists with `device_stage_files` (if a call fails,
-   stage fewer files at a time; retry once after a minute). Then set up here:
+4. The downloading already happened on Windows: the Windows scheduled task "Rawcut GTA clips"
+   (daily 7:20 PM, Python 3.13) runs `pc_gta_daily.py` in `gta.pc_folder`
+   (`C:\Users\Declan\Videos\RawcutGTA`; in `device_bash` it's `~/mnt/Videos/RawcutGTA`). Twitch is
+   blocked in this cloud workspace and in `device_bash` too, so never try to download here or
+   there. Read `last_run.log` and `inbox/manifest.json` with `device_bash` (`cat`). If the log is
+   missing, older than today 7:00 PM, or shows an error, say so in the final message (quote the
+   error) and use whatever `inbox/` holds only if its manifest `started` is from today.
+   Never delete or move anything on the computer.
+5. Stage `inbox/manifest.json` and every part it lists with `device_stage_files` (Windows paths
+   under `C:\Users\Declan\Videos\RawcutGTA\inbox\`; ≤50 per call; if a call fails, stage fewer
+   files at a time and retry once). Then set up here:
    `pip install -q sherpa-onnx soundfile imageio-ffmpeg numpy pillow`,
    `export CLIPKIT_WORK=$HOME/rawcut-work`, and run
-   `python tools/stream_clips.py assemble <staged manifest.json>`.
+   `python tools/stream_clips.py assemble /mnt/user-data/uploads/Videos/RawcutGTA/inbox/manifest.json`.
+   Skip clips already in `streams/used.json`.
 6. For each ready clip, most views first, until the target is reached:
    - `python tools/stream_clips.py frame <path>` and look at the PNG. Skip the clip unless it shows
      the campaign's `game_filter` in real gameplay from the campaign's period (not menus, loading
      screens, another game or another creator's content), the streamer is the main focus, and it
      breaks no `clip_rules`.
-   - If the campaign's `facecam` is null: if the stream shows a webcam, read its box in the PNG (X,Y,W,H
-     in pixels of the source size `frame` prints) and save it as `"facecam": [X, Y, W, H]`;
-     with no webcam save `"facecam": []` (blurred layout).
-   - `python tools/stream_clips.py transcript <path>`. Skip clips with no real moment, and clips
-     where the streamer comes off badly.
+   - Facecam: check the campaign's `facecam` box against the PNG every time (sources are
+     1280x720). If the webcam isn't there (new layout, IRL camera, no cam), read the new box (X,Y,W,H
+     in source pixels, the camera image only, never sponsor overlays or logos) and save it as
+     `"facecam": [X, Y, W, H]`, or `[]` for no webcam (blurred layout).
+   - `python tools/stream_clips.py transcript <path>`. Skip clips with no real moment, clips
+     where the streamer comes off badly, and clips built around slurs or sexual jokes. (On-screen
+     captions mask strong swearing automatically; keep the hook and the post caption clean.)
    - Write the on-screen hook: 3–8 words that make someone stop scrolling (the wildest or funniest
      moment, a question, the streamer's reaction), with the streamer's name in it (e.g. "Clix
      can't stop crashing"). Positive or neutral about the streamer. No GTA VI story spoilers,
