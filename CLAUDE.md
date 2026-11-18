@@ -210,10 +210,12 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    - Wait until its `dueAt` (use a background `sleep` or Monitor; never a foreground sleep), then
      call Buffer `get_post` every 2 minutes until it is sent and has the public TikTok link
      (`externalLink` / `serviceLink`). Give up on a post after 20 minutes and list it as a problem.
-   - Open the campaign's `campaign_url` in the browser on the user's computer: the Claude desktop
-     app's built-in browser (Claude_Browser tools), or Claude in Chrome if that's the one available.
-     Both keep the user's Content Rewards / Whop login. Use the campaign's submit button, paste the
-     TikTok link, choose TikTok if asked, submit, and read back the confirmation on the page.
+   - Open the campaign's `campaign_url` in the Claude desktop app's built-in browser on the user's
+     computer (Claude_Browser tools; contentrewards.com is already allowed there and signed in as
+     Declan Kennedy, campaign status "Joined"). Click the orange **Submit clip** button, paste the
+     TikTok link, pick TikTok / @mediarawcut if asked, submit, and read back the confirmation. Then
+     open `https://contentrewards.com/c/submissions` and check the link is listed. Don't touch
+     anything else in the account (settings, payouts, other campaigns).
    - Then `python scripts/ledger.py update --post-id <id> --status sent --link <url> --submitted`.
    - Submit only clips made for that campaign, each link once. Never submit a story video.
    - If no browser is available or it isn't signed in, don't stop the job: put every unsubmitted
