@@ -266,6 +266,91 @@
         "researched": "2026-11-16"
       },
       "notes": "Delete fields you don't need. 'twitch' is the channel login the PC downloader uses. 'facecam' is X,Y,W,H in the source video (set by the GTA clip job the first time it sees the stream layout)."
+    },
+    "gta6-clix": {
+      "active": true,
+      "name": "Clix GTA VI Marathon Pool ($5,000, Reach on Content Rewards)",
+      "kind": "stream",
+      "paid": true,
+      "streamer": "Clix",
+      "twitch": "clix",
+      "campaign_url": "https://contentrewards.com/c/campaigns/985dc674-c75e-44fc-ac87-1b1506324389",
+      "submit_where": "contentrewards.com -> the campaign -> Submit (within the campaign's time limit after posting)",
+      "rate_per_1k": null,
+      "min_payout_per_post": null,
+      "max_payout_per_post": null,
+      "platforms": [
+        "tiktok_gta"
+      ],
+      "required_text": [
+        "#ad"
+      ],
+      "required_mentions": [
+        "@clix"
+      ],
+      "min_seconds": 8,
+      "max_seconds": 60,
+      "voiceover_allowed": false,
+      "facecam": null,
+      "disclosure_badge": "#AD",
+      "game_filter": "Grand Theft Auto VI",
+      "caption_rules": [
+        "Tag @clix and say he's live on Twitch (twitch.tv/clix).",
+        "No GTA VI story spoilers in the hook or the first second.",
+        "Full campaign rules are at reachclipping.com/ClixGTA (behind the join); add anything stricter here once known."
+      ],
+      "clip_rules": [
+        "Only moments from Clix's GTA VI marathon (his stream or the shared Miami house stream with him in it).",
+        "Only GTA VI marathon content: skip clips from before the marathon, other games, menus or loading screens.",
+        "Reject clips that are mostly in-game radio music or other creators' content without Clix."
+      ],
+      "hashtags": {
+        "always": [
+          "#ad",
+          "#gta6"
+        ],
+        "core": [
+          "#gtavi",
+          "#gta",
+          "#gaming",
+          "#twitch",
+          "#streamer",
+          "#gtaclips"
+        ],
+        "by_topic": {
+          "funny / fail": [
+            "#gamingfunny"
+          ],
+          "chase / police": [
+            "#gta6gameplay"
+          ],
+          "reaction": [
+            "#twitchclips"
+          ]
+        },
+        "youtube_only": [
+          "#shorts"
+        ],
+        "avoid": [
+          "#fyp",
+          "#foryou",
+          "#viral",
+          "#gta6leak",
+          "#gta6free"
+        ],
+        "researched": "2026-11-16"
+      },
+      "notes": "User joined 2026-11-17. Marathon with Lacy from a rented Miami house, starting at GTA VI launch.",
+      "rules_url": "https://reachclipping.com/ClixGTA",
+      "pay": "pool: $5,000 split by each clipper's share of views; paid when the pool ends (when the marathon ends)",
+      "joined": "2026-11-17",
+      "ends": "when Clix's GTA VI marathon ends",
+      "submit_platforms_allowed": [
+        "tiktok",
+        "instagram",
+        "youtube",
+        "x"
+      ]
     }
   }
 }
