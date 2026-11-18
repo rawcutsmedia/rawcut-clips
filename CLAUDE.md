@@ -19,7 +19,8 @@ choice, and report what you did in the final message and the email.
   or the links won't exist.
 - `config.json` → `test_mode: true` means: create Buffer posts as **drafts** (`saveToDraft: true`)
   instead of scheduling them. Never change `test_mode` yourself.
-- Active campaign: `scary-stories` (not paid; no #ad). `boxabl` is retired (`active: false`).
+- `scary-stories` (not paid; no #ad) is **paused** since Nov 17, 2026 (`paused: true`): the
+  account is focusing on the Clix GTA VI campaign. `boxabl` is retired (`active: false`).
 - GTA VI streamer campaigns (from contentrewards.com) are `gta6-<streamer>` entries with
   `kind: "stream"` and `paid: true`; `gta6-template` shows the fields. Active now: `gta6-clix`
   (Clix GTA VI marathon pool), posted on the main `@mediarawcut` TikTok by the **GTA clip job**
@@ -29,8 +30,10 @@ choice, and report what you did in the final message and the email.
 
 ## Clip factory job (write and render story videos)
 Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue/` (3 × 5 = 15).
-1. `git pull --rebase origin main`, then `python scripts/ledger.py summary`. need = target −
-   `queue_clips`, at most `factory.max_clips_per_run`. If need is 0, stop and say "Queue is full".
+1. `git pull --rebase origin main`. If the `scary-stories` campaign has `paused: true` or
+   `active: false`, stop right away and say only "Stories are paused." Otherwise run
+   `python scripts/ledger.py summary`. need = target − `queue_clips`, at most
+   `factory.max_clips_per_run`. If need is 0, stop and say "Queue is full".
 2. Set up: `pip install -q kokoro-onnx==0.6.1 soundfile piper-tts imageio-ffmpeg numpy pillow` and
    `export CLIPKIT_WORK=$HOME/rawcut-work`. The narrator voice (Kokoro, set in `config.json` → `story`) downloads from GitHub on first use.
    Keep kokoro-onnx pinned to 0.6.1: story_maker uses its word timings.
@@ -58,7 +61,9 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
 ## Morning job (schedule today's posts)
 1. `git pull --rebase origin main`.
 2. Read `config.json` and `campaigns.json`.
-3. List `queue/*.mp4`, oldest first (by filename). If there are none, stop and say so.
+3. List `queue/*.mp4`, oldest first (by filename). If there are none, stop and say so. If the
+   `scary-stories` campaign has `paused: true` and there is nothing else to post, stop and say only
+   "Stories are paused; nothing to post."
 4. Work out which clips are allowed, up to `clips_per_day` (currently 5, so one clip per slot;
    every clip goes to every connected platform in its campaign's `platforms`). **Skip GTA stream
    clips** (sidecar `kind: "stream"`): the GTA clip job posts those in the evening.
@@ -179,6 +184,9 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
      moment, a question, the streamer's reaction), with the streamer's name in it (e.g. "Clix
      can't stop crashing"). Positive or neutral about the streamer. No GTA VI story spoilers,
      nothing the clip doesn't show.
+   - Cut for watch time: start on the peak, not the setup (the funniest or wildest moment, or the
+     start of it, within the first 2 seconds), drop dead air and the slow ending. Aim for 10–30
+     seconds; never longer than the campaign's `max_seconds`.
    - `python tools/stream_clips.py make <path> --campaign <key> --hook "<hook>" --clip-id <id>
      --clip-title "<twitch title>" --clip-url <url> --views <views> --streamer "<streamer>"`.
      Use `--start`/`--end` (seconds) to cut a slow start or a dead ending, staying within the
