@@ -1,9 +1,12 @@
-# What's working (format reset Oct 29, 2026: scary stories; replaced every Sunday once there's data)
+# What's working (updated by the evening job; GTA section daily once there's data)
 
-- New format, no story data yet. Carried over from the clip weeks: TikTok drove almost all views, and
-  bold, specific hooks beat descriptive ones by 10x or more.
-- Rules until real numbers arrive:
-  1. Titles name one concrete wrong detail ("The footage shows an empty porch.").
-  2. Keep stories 70–90 seconds; TikTok's Creator Rewards only counts videos over 1 minute.
-  3. Rotate themes daily (job rules, devices/cameras, neighbors, roads/woods, night shifts) so the
-     weekly stats can show which ones win.
+## GTA clips (Clix GTA VI marathon on @mediarawcut, started Nov 18, 2026)
+- No data yet. Starting rules from research until the numbers say otherwise:
+  1. Open on the peak moment within the first 2 seconds; cut to 10-30 seconds.
+  2. Funny moments, fails and wild chases first; skip menus, long talking and anything negative about Clix.
+  3. Hook names Clix and is a question or a reaction ("Clix did NOT expect this").
+  4. One experiment a night: vary one thing (hook style, length, moment) and record it.
+
+## Scary stories (paused since Nov 17, 2026)
+- Never caught on: about 10,700 TikTok views across 40 stories and 20 Boxabl clips. Bold, specific
+  hooks beat descriptive ones; TikTok drove almost all views.

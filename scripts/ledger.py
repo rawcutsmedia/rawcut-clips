@@ -8,6 +8,11 @@ Post ledger (log/posts.jsonl): one line per Buffer post.
   python scripts/ledger.py update --post-id ID --status sent [--link URL] [--error "..."]
          [--submitted]   # the link was submitted on Content Rewards
   python scripts/ledger.py summary        # counts + queue size
+  python scripts/ledger.py learn --kind stream   # what wins / loses, by feature (self-improvement)
+
+  add ... --features '{"hook_style": "question", "moment": "funny", "seconds": 18, ...}'
+  update --post-id ID --metrics '{"views": 1200, "likes": 80, "comments": 6, "shares": 3}'
+  update --post-id ID --cr-status approved|rejected|pending [--cr-views N] [--cr-note "why"]
 """
 import argparse
 import json
@@ -41,6 +46,7 @@ def main():
     p.add_argument("--status", default="scheduled")
     p.add_argument("--error")
     p.add_argument("--tags", help='hashtags used, e.g. "#ad #boxabl #tinyhouse"')
+    p.add_argument("--features", help="JSON of what this post tried (hook_style, moment, seconds...)")
     u = sub.add_parser("update")
     u.add_argument("--post-id", required=True)
     u.add_argument("--status")
@@ -48,6 +54,14 @@ def main():
     u.add_argument("--error")
     u.add_argument("--views", type=int)
     u.add_argument("--submitted", action="store_true", help="link submitted on Content Rewards")
+    u.add_argument("--metrics", help="JSON of every metric Buffer returned (views, likes, ...)")
+    u.add_argument("--cr-status", help="Content Rewards review status: approved/rejected/pending")
+    u.add_argument("--cr-views", type=int, help="approved views Content Rewards shows")
+    u.add_argument("--cr-note", help="rejection reason or note from Content Rewards")
+    lp = sub.add_parser("learn", help="compare posts by feature to find what gets views")
+    lp.add_argument("--kind", default="stream", help="stream (GTA clips) or story")
+    lp.add_argument("--days", type=int, default=14)
+    lp.add_argument("--min-age-hours", type=int, default=24, help="let views settle first")
     sub.add_parser("pending")
     sub.add_parser("summary")
     s = sub.add_parser("stats", help="views + estimated earnings for recent sent posts")
@@ -65,6 +79,7 @@ def main():
                      "campaign": a.campaign, "title": a.title, "status": a.status,
                      "error": a.error, "link": None, "submitted": False,
                      "tags": (a.tags or "").lower().split(),
+                     "features": json.loads(a.features) if a.features else {},
                      "created_at": now.isoformat(timespec="seconds")})
         write(rows)
         print("added")
@@ -79,6 +94,17 @@ def main():
                         r[k] = v
                 if a.views is not None:
                     r["views_at"] = now.isoformat(timespec="seconds")
+                if a.metrics:
+                    m = {k.lower(): v for k, v in json.loads(a.metrics).items()}
+                    r["metrics"] = m
+                    r["metrics_at"] = now.isoformat(timespec="seconds")
+                    v = m.get("views", m.get("plays", m.get("impressions")))
+                    if v is not None:
+                        r["views"] = int(v)
+                        r["views_at"] = now.isoformat(timespec="seconds")
+                for k in ("cr_status", "cr_views", "cr_note"):
+                    if getattr(a, k) is not None:
+                        r[k] = getattr(a, k)
                 if a.submitted:
                     r["submitted"] = True
                     r["submitted_at"] = now.isoformat(timespec="seconds")
@@ -141,6 +167,81 @@ def main():
             "top": [{k: r.get(k) for k in keep} for r in ranked[:5]],
             "bottom": [{k: r.get(k) for k in keep} for r in ranked[-5:]] if len(ranked) > 5 else [],
             "hashtag_avg_views": [{"tag": t, "avg_views": v, "posts": n} for t, v, n in tag_avg],
+        }, indent=2))
+
+    elif a.cmd == "learn":
+        camps = json.loads((ROOT / "campaigns.json").read_text(encoding="utf-8"))["campaigns"]
+
+        def kind(r):
+            return camps.get(r.get("campaign"), {}).get("kind") or (
+                "story" if r.get("campaign") == "scary-stories" else "other")
+
+        rows2 = [r for r in rows if kind(r) == a.kind and r.get("status") == "sent"
+                 and r.get("due_at") and r.get("views") is not None
+                 and (now - datetime.fromisoformat(r["due_at"])).days < a.days
+                 and (now - datetime.fromisoformat(r["due_at"])).total_seconds() >= a.min_age_hours * 3600]
+
+        def eng(r):
+            m = r.get("metrics") or {}
+            inter = sum(int(m.get(k, 0) or 0) for k in ("likes", "comments", "shares", "saves",
+                                                        "reactions", "favorites"))
+            return inter / r["views"] if r["views"] else 0.0
+
+        def bucket(name, v):
+            if v is None:
+                return None
+            if name == "seconds":
+                v = float(v)
+                return "<=15s" if v <= 15 else "16-25s" if v <= 25 else "26-35s" if v <= 35 else "36s+"
+            if name == "source_views":
+                v = int(v)
+                return "<1k" if v < 1000 else "1k-5k" if v < 5000 else "5k+"
+            if name == "post_time":
+                return str(v)[:2] + ":00"
+            return str(v)
+
+        groups = {}
+        for r in rows2:
+            feats = dict(r.get("features") or {})
+            feats.pop("hook", None)
+            for k, v in feats.items():
+                b = bucket(k, v)
+                if b is not None:
+                    groups.setdefault(k, {}).setdefault(b, []).append(r)
+            for t in r.get("tags") or []:
+                groups.setdefault("hashtag", {}).setdefault(t, []).append(r)
+
+        def summ(rs):
+            vs = sorted(x["views"] for x in rs)
+            appr = [x for x in rs if x.get("cr_status") in ("approved", "rejected")]
+            return {"posts": len(rs), "avg_views": round(sum(vs) / len(vs)),
+                    "median_views": vs[len(vs) // 2],
+                    "engagement_rate_pct": round(100 * sum(eng(x) for x in rs) / len(rs), 2),
+                    "approved_pct": round(100 * sum(x["cr_status"] == "approved" for x in appr) / len(appr))
+                    if appr else None}
+
+        out = {}
+        for k, bs in groups.items():
+            table = sorted(((b, summ(rs)) for b, rs in bs.items()
+                            if len(rs) < len(rows2) or k != "hashtag"),
+                           key=lambda x: x[1]["avg_views"], reverse=True)
+            out[k] = [{"value": b, **st} for b, st in table]
+        ranked = sorted(rows2, key=lambda r: r["views"], reverse=True)
+        brief = lambda r: {"title": r.get("title"), "views": r["views"],
+                           "engagement_pct": round(100 * eng(r), 2), "cr_status": r.get("cr_status"),
+                           "features": r.get("features"), "link": r.get("link")}
+        rejected = [{"title": r.get("title"), "note": r.get("cr_note")} for r in rows2
+                    if r.get("cr_status") == "rejected"]
+        print(json.dumps({
+            "kind": a.kind, "measured_posts": len(rows2),
+            "enough_data": len(rows2) >= 8,
+            "total_views": sum(r["views"] for r in rows2),
+            "avg_views": round(sum(r["views"] for r in rows2) / len(rows2)) if rows2 else 0,
+            "by_feature": out,
+            "top": [brief(r) for r in ranked[:3]],
+            "bottom": [brief(r) for r in ranked[-3:]] if len(ranked) > 3 else [],
+            "rejected_by_campaign": rejected,
+            "note": "Compare buckets with 3+ posts only; fewer is noise. Views settle after ~24-48h.",
         }, indent=2))
 
 

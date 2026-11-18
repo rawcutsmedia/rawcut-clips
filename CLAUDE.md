@@ -149,6 +149,11 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    rule break (above all anything AI-generated) can ban the account from every Reach campaign.
 2. Tonight's target = `gta.clips_per_night`. Stream clips already in `queue/` (sidecar
    `kind: "stream"`) that still meet the rules count toward it; make new ones for the rest.
+   **Learn first:** read the `## GTA clips` section of `insights.md` and follow its rules (which
+   moments, hook styles, lengths and hashtags win). Make exactly one clip per night an
+   **experiment**: change one thing the insights haven't tested enough (a different hook style,
+   length bucket, moment type or hashtag), so the system keeps discovering what works. Mark it
+   `"experiment": true` in its features (step 8).
 3. Reach the computer with `get_device_info`. If it can't be reached, stop and say so in one plain
    line ("Your computer wasn't on with the Claude app open, so no GTA clips tonight").
 4. The downloading already happened on Windows: the Windows scheduled task "Rawcut GTA clips"
@@ -204,8 +209,13 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
      `raw_url` video; `text` = the caption (Caption rules → GTA stream clips);
      `metadata.tiktok.isAiGenerated: false`. Never `saveToDraft` unless `test_mode` is true (then
      stop after drafting; nothing to submit).
-   - Record each post: `python scripts/ledger.py add --platform tiktok --post-id <id> --due-at <dueAt>
-     --media <media_path> --campaign <key> --title "<hook>" --tags "<hashtags>" --status scheduled`.
+   - Record each post with what it tried, so the evening job can learn from it:
+     `python scripts/ledger.py add --platform tiktok --post-id <id> --due-at <dueAt>
+     --media <media_path> --campaign <key> --title "<hook>" --tags "<hashtags>" --status scheduled
+     --features '{"hook": "<hook>", "hook_style": "<question|reaction|statement|quote|stakes>",
+     "moment": "<funny|fail|glitch|chase|clutch|rage|wholesome|chat>", "seconds": <length>,
+     "post_time": "<HH:MM>", "source_views": <twitch views>, "experiment": <true|false>}'`.
+     Use only those labels so posts can be compared.
 9. Submit each link on Content Rewards within `submit_within_minutes` (30) of its post going live:
    - Wait until its `dueAt` (use a background `sleep` or Monitor; never a foreground sleep), then
      call Buffer `get_post` every 2 minutes until it is sent and has the public TikTok link
@@ -217,6 +227,10 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
      open `https://contentrewards.com/c/submissions` and check the link is listed. Don't touch
      anything else in the account (settings, payouts, other campaigns).
    - Then `python scripts/ledger.py update --post-id <id> --status sent --link <url> --submitted`.
+   - While `/c/submissions` is open, also read the review status and views of every earlier GTA
+     submission listed there and record them:
+     `python scripts/ledger.py update --post-id <id> --cr-status <approved|rejected|pending>
+     --cr-views <n> [--cr-note "<rejection reason>"]` (match rows by TikTok link).
    - Submit only clips made for that campaign, each link once. Never submit a story video.
    - If no browser is available or it isn't signed in, don't stop the job: put every unsubmitted
      link at the top of the final message as "Submit now: <link> → <campaign_url>" (the final
@@ -235,8 +249,10 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
 4. Views: make one Buffer `execute_query` call for the posts sent in the last 7 days:
    `query { posts(first: 100, input: {organizationId: "6ad639a2de0f08ea4b18d4a9", filter: {status: [sent],
    dueAt: {start: "<7 days ago, ISO>", end: "<now, ISO>"}}}) { edges { node { id metrics { type value } } } } }`.
-   For each post that's in the ledger, run `python scripts/ledger.py update --post-id <id> --views <n>`. Use
-   the `views` metric, or `impressions` if there's no `views`. Skip posts with no metrics yet.
+   For each post that's in the ledger, store every metric Buffer returned:
+   `python scripts/ledger.py update --post-id <id> --metrics '{"views": n, "likes": n, "comments": n,
+   "shares": n, ...}'` (use the metric `type` names as keys; views fall back to plays/impressions).
+   Skip posts with no metrics yet.
    If `execute_query` isn't available, use `list_posts` with `includeMetrics: true` instead.
    Then run `python scripts/ledger.py stats` and `python scripts/ledger.py summary`, and call
    `list_posts` with status `scheduled` for tomorrow.
@@ -255,7 +271,18 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    - **Queue**: clips left and roughly how many days that covers. If fewer than 2 days are left,
      say so.
    - **Tomorrow**: scheduled posts.
-6. Cleanup: `python scripts/cleanup.py` deletes videos whose posts all finished more than
+6. **Learn (every day, GTA clips):** run `python scripts/ledger.py learn --kind stream`. When it says
+   `"enough_data": true` (8+ GTA posts at least a day old), rewrite the `## GTA clips` section of
+   `insights.md` (12 lines or fewer, leave other sections alone):
+   - what wins and what loses by moment type, hook style, length, posting time and hashtag, with
+     average views, interaction rate and Content Rewards approval, and the post counts behind
+     each (ignore buckets with fewer than 3 posts);
+   - any rejection reasons from Content Rewards, as a rule to avoid them;
+   - then 3–5 concrete rules for tomorrow's GTA clip job, including what tonight's experiment
+     should test next.
+   Only state what the numbers show. Before there's enough data, leave the section as is.
+   Add one line to the email: the single biggest lesson so far.
+7. Cleanup: `python scripts/cleanup.py` deletes videos whose posts all finished more than
    `cleanup_after_days` ago (Buffer has already uploaded them to the platforms).
    **On Sundays only**, first update `insights.md` from `python scripts/ledger.py stats --days 14`. Keep it
    to 15 lines or fewer:
