@@ -211,12 +211,19 @@ def main():
             for t in r.get("tags") or []:
                 groups.setdefault("hashtag", {}).setdefault(t, []).append(r)
 
+        def retention(r):  # share of the clip people watched on average
+            m, f = r.get("metrics") or {}, r.get("features") or {}
+            avg, sec = m.get("averagetimewatched"), f.get("seconds")
+            return min(1.0, float(avg) / float(sec)) if avg and sec else None
+
         def summ(rs):
             vs = sorted(x["views"] for x in rs)
+            rets = [x for x in (retention(r) for r in rs) if x is not None]
             appr = [x for x in rs if x.get("cr_status") in ("approved", "rejected")]
             return {"posts": len(rs), "avg_views": round(sum(vs) / len(vs)),
                     "median_views": vs[len(vs) // 2],
                     "engagement_rate_pct": round(100 * sum(eng(x) for x in rs) / len(rs), 2),
+                    "watched_pct": round(100 * sum(rets) / len(rets)) if rets else None,
                     "approved_pct": round(100 * sum(x["cr_status"] == "approved" for x in appr) / len(appr))
                     if appr else None}
 
@@ -228,7 +235,9 @@ def main():
             out[k] = [{"value": b, **st} for b, st in table]
         ranked = sorted(rows2, key=lambda r: r["views"], reverse=True)
         brief = lambda r: {"title": r.get("title"), "views": r["views"],
-                           "engagement_pct": round(100 * eng(r), 2), "cr_status": r.get("cr_status"),
+                           "engagement_pct": round(100 * eng(r), 2),
+                           "watched_pct": round(100 * retention(r)) if retention(r) is not None else None,
+                           "cr_status": r.get("cr_status"),
                            "features": r.get("features"), "link": r.get("link")}
         rejected = [{"title": r.get("title"), "note": r.get("cr_note")} for r in rows2
                     if r.get("cr_status") == "rejected"]

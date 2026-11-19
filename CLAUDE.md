@@ -156,6 +156,11 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    `"experiment": true` in its features (step 8).
 3. Reach the computer with `get_device_info`. If it can't be reached, stop and say so in one plain
    line ("Your computer wasn't on with the Claude app open, so no GTA clips tonight").
+   **Work fast:** the laptop is only promised until 10:30 PM. Start the speech-model setup
+   (`pip install ...` and a first `stream_clips.py transcript` call, which downloads the model) in
+   the background right away, while you stage and look at clips. Post each clip as soon as it
+   passes the quality check instead of waiting for all of them, so the first one goes out around
+   8:15 PM. After 10:00 PM, post only what's ready and finish.
 4. The downloading already happened on Windows: the Windows scheduled task "Rawcut GTA clips"
    (daily 7:20 PM, Python 3.13) runs `pc_gta_daily.py` in `gta.pc_folder`
    (`C:\Users\Declan\Videos\RawcutGTA`; in `device_bash` it's `~/mnt/Videos/RawcutGTA`). Twitch is
