@@ -30,21 +30,44 @@ def log(msg):
         f.write(line + "\n")
 
 
-def fetch(path, dest=None):
-    with urllib.request.urlopen(RAW + path, timeout=60) as r:
-        data = r.read()
-    if dest:
-        Path(dest).write_bytes(data)
-    return data
+def fetch(path, dest=None, tries=8):
+    """Download a file from the repo, waiting for the network (the laptop may have just woken up).
+    Retries for about 8 minutes; on failure keeps the last good local copy if there is one."""
+    import time
+    cache = HERE / ".cache" / path.replace("/", "_")
+    for i in range(tries):
+        try:
+            with urllib.request.urlopen(RAW + path, timeout=60) as r:
+                data = r.read()
+            cache.parent.mkdir(exist_ok=True)
+            cache.write_bytes(data)
+            if dest:
+                Path(dest).write_bytes(data)
+            return data
+        except Exception as ex:
+            log(f"waiting for the network ({path}: {ex}); try {i + 1}/{tries}")
+            time.sleep(min(30 * (i + 1), 90))
+    if cache.exists():
+        log(f"using the last good copy of {path}")
+        data = cache.read_bytes()
+        if dest:
+            Path(dest).write_bytes(data)
+        return data
+    raise RuntimeError(f"could not download {path}")
 
 
 def main():
     LOG.write_text("", encoding="utf-8")
+    nxt = HERE / "pc_gta_daily.next.py"
+    if nxt.exists() and nxt.read_bytes() != Path(__file__).read_bytes():
+        Path(__file__).write_bytes(nxt.read_bytes())  # newer version from the repo, used from now on
+        log("updated pc_gta_daily.py from the repo")
     try:
         camps = json.loads(fetch("campaigns.json"))["campaigns"]
         cfg = json.loads(fetch("config.json")).get("gta", {})
         fetch("streams/used.json", HERE / "used.json")
         fetch("tools/twitch_top_clips.py", HERE / "twitch_top_clips.py")
+        fetch("tools/pc_gta_daily.py", HERE / "pc_gta_daily.next.py")  # self-update next run
     except Exception as ex:
         log(f"ERROR fetching from GitHub: {ex}")
         return 1
