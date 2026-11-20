@@ -158,8 +158,10 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    **experiment**: change one thing the insights haven't tested enough (a different hook style,
    length bucket, moment type or hashtag), so the system keeps discovering what works. Mark it
    `"experiment": true` in its features (step 8).
-3. Reach the computer with `get_device_info`. If it can't be reached, stop and say so in one plain
-   line ("Your computer wasn't on with the Claude app open, so no GTA clips tonight").
+3. Reach the computer with `get_device_info`. If it can't be reached, don't stop yet: the laptop
+   may just be waking up. Check again every 5 minutes (a background `sleep` or Monitor, never a
+   foreground sleep) until 9:30 PM. Only then stop and say so in one plain line ("Your computer
+   wasn't on with the Claude app open, so no GTA clips tonight").
    **Work fast:** the laptop is only promised until 10:30 PM. Start the speech-model setup
    (`pip install ...` and a first `stream_clips.py transcript` call, which downloads the model) in
    the background right away, while you stage and look at clips. Post each clip as soon as it
@@ -174,6 +176,9 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    - Keep the laptop's script current: with `device_bash`, download
      `https://raw.githubusercontent.com/rawcutsmedia/rawcut-clips/main/tools/pc_gta_daily.py` over
      `<pc_folder>/pc_gta_daily.py` (overwriting is fine; it fixes tomorrow's run).
+   - If the log is from today but has no `exit` line yet, the download is still running (the laptop
+     woke late). Post any stream clips already in `queue/` meanwhile, then re-read the log every
+     2 minutes until it shows `exit` or an error, up to 9:30 PM.
    - If the log is missing, older than today 7:00 PM, or shows an error (for example a timeout
      because the laptop had just woken up), say so in the final message (quote the error), then
      **don't give up**: use the clips in `inbox/` that aren't in `streams/used.json` and are from
