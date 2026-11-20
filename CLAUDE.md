@@ -131,9 +131,14 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
   story title. YouTube description: 1–2 lines, then the credit, then the hashtags in this order:
   `#ad` first for paid campaigns only, then the campaign's `always` tags, a `core` tag, the rest,
   and `#shorts` last.
-- GTA stream clips: start the caption with `#ad` (the disclosure must come first), then the hook:
-  the clip's `title` reworded, or the wildest or funniest moment in `transcript`, with the
-  streamer's name in it (for Clix: the word "Clix" must be in the caption). Never spoil GTA VI
+- GTA stream clips: short and a little controversial, to get people arguing in the comments (the
+  user's call, Nov 20). Start the caption with `#ad` (the disclosure must come first), then ONE
+  brief hot take, 8 words or fewer and under 60 characters, saying GTA VI is way better than GTA V,
+  tied to what the clip shows, with the streamer's name in it (for Clix: the word "Clix" must be in
+  the caption). Examples of the tone: "Clix just made GTA 5 look ancient", "GTA 5 cops could
+  never. Clix 😭", "Clix in GTA 6 > all of GTA 5". New wording every post, never a repeat. The
+  argument is about the games only: never negative about the streamer, other creators or any
+  group of people, no insults, nothing false about the game or the clip. Never spoil GTA VI
   story missions, never portray the streamer negatively, never promise something the clip doesn't
   show. Add every `required_text` item exactly as written (e.g. `#Clix` with its capital C, even
   though other hashtags are lowercase), every `required_mentions` item and every `caption_rules`
@@ -235,7 +240,8 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
      --media <media_path> --campaign <key> --title "<hook>" --tags "<hashtags>" --status scheduled
      --features '{"hook": "<hook>", "hook_style": "<question|reaction|statement|quote|stakes>",
      "moment": "<funny|fail|glitch|chase|clutch|rage|wholesome|chat>", "seconds": <length>,
-     "post_time": "<HH:MM>", "source_views": <twitch views>, "experiment": <true|false>}'`.
+     "post_time": "<HH:MM>", "source_views": <twitch views>, "caption_style": "hot_take",
+     "experiment": <true|false>}'`.
      Use only those labels so posts can be compared.
 9. Submit each link on Content Rewards within `submit_within_minutes` (30) of its post going live:
    - Wait until its `dueAt` (use a background `sleep` or Monitor; never a foreground sleep), then
@@ -280,8 +286,10 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
 5. Send **one** plain-text email with the Gmail connector to the recipient named in the run prompt:
    - Subject: `Rawcut daily: <n> live, <views> views this week` (add `[TEST MODE]` when test_mode is
      true)
-   - **Submit these links**: only paid-campaign posts whose ledger row has `submitted: false`,
-     grouped by campaign → platform, with link, title and posted time. Leave this section out when
+   - **Submit these links**: only paid-campaign posts whose ledger row has `submitted: false` and
+     that went live less than 30 minutes ago (Content Rewards refuses older ones; list those under
+     Problems as "missed the submit window" instead), grouped by campaign → platform, with link,
+     title and posted time. Leave this section out when
      there are none. (The GTA clip job submits its own links; list how many it submitted.)
    - **Today's posts**: platform, title, link.
    - **Views (last 7 days)**: total views, and the top 3 posts with their views. For paid campaigns

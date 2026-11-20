@@ -9,6 +9,8 @@
   2. Funny moments, fails and wild chases first; skip menus, long talking and anything negative about Clix.
   3. Hook names Clix and is a question or a reaction ("Clix did NOT expect this").
   4. One experiment a night: vary one thing (hook style, length, moment) and record it.
+  5. Captions (user's call, Nov 20): short GTA 6 > GTA 5 hot takes naming Clix, to drive comments.
+     The 4 posts before that used longer descriptive captions; compare `caption_style` once measured.
 
 ## Scary stories (paused since Nov 17, 2026)
 - Never caught on: about 10,700 TikTok views across 40 stories and 20 Boxabl clips. Bold, specific
