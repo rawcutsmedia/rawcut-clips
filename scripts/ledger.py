@@ -141,10 +141,10 @@ def main():
             c = camps.get(r.get("campaign"), {})
             if not c.get("paid") or not r.get("views"):
                 return 0.0
-            usd = r["views"] / 1000 * c.get("rate_per_1k", 0)
-            if usd < c.get("min_payout_per_post", 0):
+            usd = r["views"] / 1000 * (c.get("rate_per_1k") or 0)
+            if usd < (c.get("min_payout_per_post") or 0):
                 return 0.0
-            return min(usd, c.get("max_payout_per_post", usd))
+            return min(usd, (c.get("max_payout_per_post") or usd))
 
         for r in recent:
             r["est_usd"] = round(earn(r), 2)
