@@ -147,8 +147,12 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    `kind: "stream"` and `active: true`; each names a `twitch` login. If there are none, stop and say
    "No active GTA campaigns yet." Read every `clip_rules` and `caption_rules` item first: one
    rule break (above all anything AI-generated) can ban the account from every Reach campaign.
-2. Tonight's target = `gta.clips_per_night`. Stream clips already in `queue/` (sidecar
-   `kind: "stream"`) that still meet the rules count toward it; make new ones for the rest.
+2. **Post at least `gta.min_posts_per_day` (4) clips tonight; the user wants no fewer.** Use stream
+   clips already in `queue/` (sidecar `kind: "stream"`, oldest first) that still meet the rules,
+   then make new ones for the rest. Then, if more good clips are available, make up to
+   `gta.buffer_clips` extra and leave them in `queue/` unposted as insurance for a night when the
+   download fails. If there aren't 4 good new clips, use unused ones from the last 3 days, then
+   relax the Twitch-views bar; only post fewer than 4 when there is truly nothing usable, and say so.
    **Learn first:** read the `## GTA clips` section of `insights.md` and follow its rules (which
    moments, hook styles, lengths and hashtags win). Make exactly one clip per night an
    **experiment**: change one thing the insights haven't tested enough (a different hook style,
@@ -182,7 +186,7 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    `export CLIPKIT_WORK=$HOME/rawcut-work`, and run
    `python tools/stream_clips.py assemble /mnt/user-data/uploads/Videos/RawcutGTA/inbox/manifest.json`.
    Skip clips already in `streams/used.json`.
-6. For each ready clip, most views first, until the target is reached:
+6. For each ready clip, most views first, until tonight's 4 plus the buffer are made:
    - `python tools/stream_clips.py frame <path>` and look at the PNG. Skip the clip unless it shows
      the campaign's `game_filter` in real gameplay from the campaign's period (not menus, loading
      screens, another game or another creator's content), the streamer is the main focus, and it
@@ -208,7 +212,8 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
 7. Quality check every new clip: frames at 1.5 s and the midpoint (`-ss <t> -i <video> -frames:v 1`).
    Hook readable and naming the streamer, webcam not cut off, captions readable, no added logo or
    badge (unless the campaign sets `disclosure_badge`). Delete a broken clip and its `.json`.
-8. Stage and post them now, on the channel in `gta.post_channel` (`tiktok` = `@mediarawcut`):
+8. Stage and post 4 of them now (buffer clips stay in `queue/`), on the channel in
+   `gta.post_channel` (`tiktok` = `@mediarawcut`):
    - `python scripts/prepare_clip.py queue/<file>.mp4` for each clip, then
      `git add -A && git commit -m "GTA clips <date>" && git push origin HEAD:main` (the raw URL must
      exist before Buffer fetches it). Check `curl -sI <raw_url>` returns 200 if the network allows.
@@ -293,7 +298,16 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
      should test next.
    Only state what the numbers show. Before there's enough data, leave the section as is.
    Add one line to the email: the single biggest lesson so far.
-7. Cleanup: `python scripts/cleanup.py` deletes videos whose posts all finished more than
+7. **GTA top-up (keeps the 4-a-day minimum):** count today's GTA posts in the ledger (campaign
+   `gta6-*`, `due_at` today). If fewer than `gta.min_posts_per_day` went out (for example the laptop
+   was off) and stream clips wait in `queue/`, post the missing number now on `@mediarawcut`:
+   `prepare_clip.py`, commit and push, `create_post` (first `dueAt` 5 minutes from now, then 10
+   minutes apart; caption per Caption rules → GTA stream clips; `isAiGenerated: false`), and
+   `ledger.py add` with `--features` built from the sidecar. Wait until each is sent, get its
+   TikTok link, and put the links at the very top of the email and of your final message (it
+   reaches the user's phone) as "Submit now (within 30 min): <link> → <campaign_url>", because this
+   job can't use the laptop's browser to submit them.
+8. Cleanup: `python scripts/cleanup.py` deletes videos whose posts all finished more than
    `cleanup_after_days` ago (Buffer has already uploaded them to the platforms).
    **On Sundays only, and only while stories are not paused**, first update the `## Scary stories`
    section of `insights.md` from `python scripts/ledger.py stats --days 14` (leave the GTA section

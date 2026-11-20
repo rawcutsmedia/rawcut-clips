@@ -61,15 +61,17 @@
     "_note": "Kokoro voices: am_michael (US male), am_fenrir (deeper US male), am_puck, bm_george (UK male), af_heart (US female). Blends work: \"am_michael*0.6+am_fenrir*0.4\". speed <1 = slower. sentence_pause / clause_pause = minimum seconds of silence after . ! ? and , ; :"
   },
   "gta": {
-    "_note": "GTA VI streamer clips (Clix pool) post on the main @mediarawcut TikTok right after the evening download, and the evening job submits each link on Content Rewards itself (CLAUDE.md 'GTA clip job').",
+    "_note": "GTA VI streamer clips (Clix pool) post on @mediarawcut: at least min_posts_per_day (4) every day. The evening GTA clip job posts and submits them; it also keeps up to buffer_clips extra edited clips in queue/ as insurance. If fewer than 4 went out by 10:47 PM, the evening report job tops up from the queue.",
     "pc_folder": "C:\\Users\\Declan\\Videos\\RawcutGTA",
-    "clips_per_channel_per_streamer": 6,
+    "clips_per_channel_per_streamer": 10,
     "min_source_views": 20,
     "min_queue_days": 1,
     "post_channel": "tiktok",
     "clips_per_night": 4,
     "spacing_minutes": 15,
     "pc_folder_bash": "~/mnt/Videos/RawcutGTA",
-    "windows_task": "Rawcut GTA clips (daily 7:20 PM, Python 3.13, runs pc_gta_daily.py)"
+    "windows_task": "Rawcut GTA clips (daily 7:20 PM, Python 3.13, runs pc_gta_daily.py)",
+    "min_posts_per_day": 4,
+    "buffer_clips": 4
   }
 }
