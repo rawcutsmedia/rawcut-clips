@@ -1,0 +1,28 @@
+{
+  "title": "Pineapple on Pizza: Settle it once and for all",
+  "campaign": "sim-battles",
+  "kind": "sim",
+  "format": "escape",
+  "matchup": "pineapple-pizza",
+  "category": "food",
+  "sides": [
+    "YES",
+    "NO"
+  ],
+  "winner": "YES",
+  "round": 1,
+  "series": {
+    "YES": 1
+  },
+  "seed": 694887549,
+  "duration": 34.65,
+  "winner_at": 31.85,
+  "topic_tag": "#foodtok",
+  "ai_generated": false,
+  "credit": null,
+  "transcript": "",
+  "media_path": "media/2026-11-28/pineapple-on-pizza-settle-it-once-and-for-all.mp4",
+  "raw_url": "https://raw.githubusercontent.com/rawcutsmedia/rawcut-clips/main/media/2026-11-28/pineapple-on-pizza-settle-it-once-and-for-all.mp4",
+  "voiceover": false,
+  "prepared_at": "2026-11-28T06:08:51-05:00"
+}

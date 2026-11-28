@@ -1,0 +1,29 @@
+{
+  "title": "PlayStation vs Xbox vs Nintendo: Who wins?",
+  "campaign": "sim-battles",
+  "kind": "sim",
+  "format": "battle",
+  "matchup": "ps-xbox-nintendo",
+  "category": "gaming",
+  "sides": [
+    "PlayStation",
+    "Xbox",
+    "Nintendo"
+  ],
+  "winner": "Nintendo",
+  "round": 1,
+  "series": {
+    "Nintendo": 1
+  },
+  "seed": 636379103,
+  "duration": 16.95,
+  "winner_at": 14.15,
+  "topic_tag": "#gaming",
+  "ai_generated": false,
+  "credit": null,
+  "transcript": "",
+  "media_path": "media/2026-11-28/playstation-vs-xbox-vs-nintendo-who-wins.mp4",
+  "raw_url": "https://raw.githubusercontent.com/rawcutsmedia/rawcut-clips/main/media/2026-11-28/playstation-vs-xbox-vs-nintendo-who-wins.mp4",
+  "voiceover": false,
+  "prepared_at": "2026-11-28T06:08:51-05:00"
+}

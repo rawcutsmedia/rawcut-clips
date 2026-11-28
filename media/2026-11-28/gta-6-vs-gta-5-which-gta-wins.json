@@ -1,0 +1,28 @@
+{
+  "title": "GTA 6 vs GTA 5: Which GTA wins?",
+  "campaign": "sim-battles",
+  "kind": "sim",
+  "format": "escape",
+  "matchup": "gta6-vs-gta5",
+  "category": "gaming",
+  "sides": [
+    "GTA 6",
+    "GTA 5"
+  ],
+  "winner": "GTA 6",
+  "round": 1,
+  "series": {
+    "GTA 6": 1
+  },
+  "seed": 961300617,
+  "duration": 27.5,
+  "winner_at": 24.7,
+  "topic_tag": "#gta6",
+  "ai_generated": false,
+  "credit": null,
+  "transcript": "",
+  "media_path": "media/2026-11-28/gta-6-vs-gta-5-which-gta-wins.mp4",
+  "raw_url": "https://raw.githubusercontent.com/rawcutsmedia/rawcut-clips/main/media/2026-11-28/gta-6-vs-gta-5-which-gta-wins.mp4",
+  "voiceover": false,
+  "prepared_at": "2026-11-28T06:08:51-05:00"
+}
