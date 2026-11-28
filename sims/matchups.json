@@ -1,0 +1,587 @@
+{
+ "_how_to_use": "Matchups for tools/sim_maker.py. Keep them friendly rivalries people love to argue about: games, teams, foods, brands, seasons, friendly country/state rivalries. Never real wars or conflicts, politics, religion, ethnic groups, or real individual people. Names only (no logos). 'priority' puts a matchup first while it's topical; 'tag' is the by_topic hashtag; 'formats' limits it to battle and/or escape.",
+ "matchups": [
+  {
+   "id": "gta6-vs-gta5",
+   "title": "GTA 6 vs GTA 5",
+   "question": "Which GTA wins?",
+   "category": "gaming",
+   "tag": "#gta6",
+   "sides": [
+    {
+     "name": "GTA 6",
+     "color": "#ff4fa3"
+    },
+    {
+     "name": "GTA 5",
+     "color": "#3fae4a"
+    }
+   ],
+   "priority": 3
+  },
+  {
+   "id": "ps-xbox-nintendo",
+   "title": "PlayStation vs Xbox vs Nintendo",
+   "question": "Who wins?",
+   "category": "gaming",
+   "tag": "#gaming",
+   "sides": [
+    {
+     "name": "PlayStation",
+     "color": "#2e6dd8"
+    },
+    {
+     "name": "Xbox",
+     "color": "#1db33a"
+    },
+    {
+     "name": "Nintendo",
+     "color": "#e60012"
+    }
+   ],
+   "priority": 2
+  },
+  {
+   "id": "fortnite-minecraft-roblox",
+   "title": "Fortnite vs Minecraft vs Roblox",
+   "question": "Which game wins?",
+   "category": "gaming",
+   "tag": "#gaming",
+   "sides": [
+    {
+     "name": "Fortnite",
+     "color": "#9d4dff"
+    },
+    {
+     "name": "Minecraft",
+     "color": "#62b53a"
+    },
+    {
+     "name": "Roblox",
+     "color": "#e2231a"
+    }
+   ],
+   "priority": 1
+  },
+  {
+   "id": "cod-vs-battlefield",
+   "title": "Call of Duty vs Battlefield",
+   "question": "Who takes it?",
+   "category": "gaming",
+   "tag": "#gaming",
+   "sides": [
+    {
+     "name": "COD",
+     "color": "#f28c28"
+    },
+    {
+     "name": "Battlefield",
+     "color": "#1f6feb"
+    }
+   ]
+  },
+  {
+   "id": "pc-vs-console",
+   "title": "PC vs Console",
+   "question": "Settle it",
+   "category": "gaming",
+   "tag": "#gaming",
+   "sides": [
+    {
+     "name": "PC",
+     "color": "#00c2ff"
+    },
+    {
+     "name": "Console",
+     "color": "#ff3d3d"
+    }
+   ]
+  },
+  {
+   "id": "michigan-vs-ohio-state",
+   "title": "Michigan vs Ohio State",
+   "question": "Who wins The Game?",
+   "category": "sports",
+   "tag": "#collegefootball",
+   "sides": [
+    {
+     "name": "Michigan",
+     "color": "#ffcb05"
+    },
+    {
+     "name": "Ohio State",
+     "color": "#bb0000"
+    }
+   ],
+   "priority": 3
+  },
+  {
+   "id": "alabama-vs-auburn",
+   "title": "Alabama vs Auburn",
+   "question": "Who wins the Iron Bowl?",
+   "category": "sports",
+   "tag": "#collegefootball",
+   "sides": [
+    {
+     "name": "Alabama",
+     "color": "#9e1b32"
+    },
+    {
+     "name": "Auburn",
+     "color": "#f26522"
+    }
+   ],
+   "priority": 2
+  },
+  {
+   "id": "cowboys-vs-eagles",
+   "title": "Cowboys vs Eagles",
+   "question": "Who wins?",
+   "category": "sports",
+   "tag": "#nfl",
+   "sides": [
+    {
+     "name": "Cowboys",
+     "color": "#2a5cc4"
+    },
+    {
+     "name": "Eagles",
+     "color": "#0b8f87"
+    }
+   ]
+  },
+  {
+   "id": "chiefs-vs-bills",
+   "title": "Chiefs vs Bills",
+   "question": "Who wins?",
+   "category": "sports",
+   "tag": "#nfl",
+   "sides": [
+    {
+     "name": "Chiefs",
+     "color": "#e31837"
+    },
+    {
+     "name": "Bills",
+     "color": "#2850c8"
+    }
+   ]
+  },
+  {
+   "id": "packers-vs-bears",
+   "title": "Packers vs Bears",
+   "question": "Who wins?",
+   "category": "sports",
+   "tag": "#nfl",
+   "sides": [
+    {
+     "name": "Packers",
+     "color": "#2f8a3a"
+    },
+    {
+     "name": "Bears",
+     "color": "#c83803"
+    }
+   ]
+  },
+  {
+   "id": "lakers-vs-celtics",
+   "title": "Lakers vs Celtics",
+   "question": "Who wins?",
+   "category": "sports",
+   "tag": "#nba",
+   "sides": [
+    {
+     "name": "Lakers",
+     "color": "#7b3fbf"
+    },
+    {
+     "name": "Celtics",
+     "color": "#00a04a"
+    }
+   ]
+  },
+  {
+   "id": "yankees-vs-red-sox",
+   "title": "Yankees vs Red Sox",
+   "question": "Who wins?",
+   "category": "sports",
+   "tag": "#mlb",
+   "sides": [
+    {
+     "name": "Yankees",
+     "color": "#3a5bbf"
+    },
+    {
+     "name": "Red Sox",
+     "color": "#bd3039"
+    }
+   ]
+  },
+  {
+   "id": "real-madrid-vs-barcelona",
+   "title": "Real Madrid vs Barcelona",
+   "question": "Who wins El Clasico?",
+   "category": "sports",
+   "tag": "#football",
+   "sides": [
+    {
+     "name": "Real Madrid",
+     "color": "#f2f2f2"
+    },
+    {
+     "name": "Barcelona",
+     "color": "#a50044"
+    }
+   ]
+  },
+  {
+   "id": "man-utd-vs-man-city",
+   "title": "Man United vs Man City",
+   "question": "Who wins the derby?",
+   "category": "sports",
+   "tag": "#football",
+   "sides": [
+    {
+     "name": "Man United",
+     "color": "#da291c"
+    },
+    {
+     "name": "Man City",
+     "color": "#6cabdd"
+    }
+   ]
+  },
+  {
+   "id": "usa-canada-mexico",
+   "title": "USA vs Canada vs Mexico",
+   "question": "Which country wins?",
+   "category": "countries",
+   "tag": "#countryballs",
+   "sides": [
+    {
+     "name": "USA",
+     "color": "#3c5bbf"
+    },
+    {
+     "name": "Canada",
+     "color": "#d80621"
+    },
+    {
+     "name": "Mexico",
+     "color": "#1a9a55"
+    }
+   ],
+   "priority": 1
+  },
+  {
+   "id": "brazil-vs-argentina",
+   "title": "Brazil vs Argentina",
+   "question": "Who wins?",
+   "category": "countries",
+   "tag": "#countryballs",
+   "sides": [
+    {
+     "name": "Brazil",
+     "color": "#ffdf00"
+    },
+    {
+     "name": "Argentina",
+     "color": "#75aadb"
+    }
+   ]
+  },
+  {
+   "id": "england-vs-france",
+   "title": "England vs France",
+   "question": "Who wins?",
+   "category": "countries",
+   "tag": "#countryballs",
+   "sides": [
+    {
+     "name": "England",
+     "color": "#f2f2f2"
+    },
+    {
+     "name": "France",
+     "color": "#2b50c8"
+    }
+   ]
+  },
+  {
+   "id": "europe-four",
+   "title": "Spain vs Italy vs France vs Germany",
+   "question": "Which country wins?",
+   "category": "countries",
+   "tag": "#countryballs",
+   "sides": [
+    {
+     "name": "Spain",
+     "color": "#e8b100"
+    },
+    {
+     "name": "Italy",
+     "color": "#009246"
+    },
+    {
+     "name": "France",
+     "color": "#2b50c8"
+    },
+    {
+     "name": "Germany",
+     "color": "#dd0000"
+    }
+   ]
+  },
+  {
+   "id": "australia-vs-new-zealand",
+   "title": "Australia vs New Zealand",
+   "question": "Who wins?",
+   "category": "countries",
+   "tag": "#countryballs",
+   "sides": [
+    {
+     "name": "Australia",
+     "color": "#ffcd00"
+    },
+    {
+     "name": "New Zealand",
+     "color": "#3a3a3a"
+    }
+   ]
+  },
+  {
+   "id": "texas-vs-california",
+   "title": "Texas vs California",
+   "question": "Which state wins?",
+   "category": "countries",
+   "tag": "#usa",
+   "sides": [
+    {
+     "name": "Texas",
+     "color": "#bf0a30"
+    },
+    {
+     "name": "California",
+     "color": "#f2b705"
+    }
+   ]
+  },
+  {
+   "id": "florida-vs-california",
+   "title": "Florida vs California",
+   "question": "Which state wins?",
+   "category": "countries",
+   "tag": "#usa",
+   "sides": [
+    {
+     "name": "Florida",
+     "color": "#ff7f32"
+    },
+    {
+     "name": "California",
+     "color": "#f2b705"
+    }
+   ]
+  },
+  {
+   "id": "pineapple-pizza",
+   "title": "Pineapple on Pizza",
+   "question": "Settle it once and for all",
+   "category": "food",
+   "tag": "#foodtok",
+   "sides": [
+    {
+     "name": "YES",
+     "color": "#ffd23f"
+    },
+    {
+     "name": "NO",
+     "color": "#ff4d4d"
+    }
+   ],
+   "priority": 2
+  },
+  {
+   "id": "pizza-burger-tacos",
+   "title": "Pizza vs Burger vs Tacos",
+   "question": "Which food wins?",
+   "category": "food",
+   "tag": "#foodtok",
+   "sides": [
+    {
+     "name": "Pizza",
+     "color": "#ff9f1c"
+    },
+    {
+     "name": "Burger",
+     "color": "#b5651d"
+    },
+    {
+     "name": "Tacos",
+     "color": "#ffd23f"
+    }
+   ]
+  },
+  {
+   "id": "coke-vs-pepsi",
+   "title": "Coke vs Pepsi",
+   "question": "Who wins?",
+   "category": "food",
+   "tag": "#foodtok",
+   "sides": [
+    {
+     "name": "Coke",
+     "color": "#e41e2b"
+    },
+    {
+     "name": "Pepsi",
+     "color": "#2457c5"
+    }
+   ]
+  },
+  {
+   "id": "fast-food-three",
+   "title": "McDonald's vs Burger King vs Wendy's",
+   "question": "Who wins?",
+   "category": "food",
+   "tag": "#fastfood",
+   "sides": [
+    {
+     "name": "McDonald's",
+     "color": "#ffc72c"
+    },
+    {
+     "name": "Burger King",
+     "color": "#ff8732"
+    },
+    {
+     "name": "Wendy's",
+     "color": "#e2203d"
+    }
+   ]
+  },
+  {
+   "id": "cats-vs-dogs",
+   "title": "Cats vs Dogs",
+   "question": "Who wins?",
+   "category": "lifestyle",
+   "tag": "#catsvsdogs",
+   "sides": [
+    {
+     "name": "Cats",
+     "color": "#ff8c42"
+    },
+    {
+     "name": "Dogs",
+     "color": "#b07a4a"
+    }
+   ],
+   "priority": 1
+  },
+  {
+   "id": "iphone-vs-android",
+   "title": "iPhone vs Android",
+   "question": "Settle it",
+   "category": "tech",
+   "tag": "#iphone",
+   "sides": [
+    {
+     "name": "iPhone",
+     "color": "#d9d9e0"
+    },
+    {
+     "name": "Android",
+     "color": "#3ddc84"
+    }
+   ],
+   "priority": 1
+  },
+  {
+   "id": "marvel-vs-dc",
+   "title": "Marvel vs DC",
+   "question": "Who wins?",
+   "category": "lifestyle",
+   "tag": "#marvel",
+   "sides": [
+    {
+     "name": "Marvel",
+     "color": "#ec1d24"
+    },
+    {
+     "name": "DC",
+     "color": "#0476f2"
+    }
+   ]
+  },
+  {
+   "id": "christmas-vs-halloween",
+   "title": "Christmas vs Halloween",
+   "question": "Which holiday wins?",
+   "category": "lifestyle",
+   "tag": "#christmas",
+   "sides": [
+    {
+     "name": "Christmas",
+     "color": "#1fa34a"
+    },
+    {
+     "name": "Halloween",
+     "color": "#ff7518"
+    }
+   ],
+   "priority": 1
+  },
+  {
+   "id": "summer-vs-winter",
+   "title": "Summer vs Winter",
+   "question": "Which season wins?",
+   "category": "lifestyle",
+   "tag": "#relatable",
+   "sides": [
+    {
+     "name": "Summer",
+     "color": "#ffb703"
+    },
+    {
+     "name": "Winter",
+     "color": "#8ecae6"
+    }
+   ]
+  },
+  {
+   "id": "cereal-or-milk-first",
+   "title": "Cereal First vs Milk First",
+   "question": "Settle it",
+   "category": "food",
+   "tag": "#relatable",
+   "sides": [
+    {
+     "name": "Cereal",
+     "color": "#e9c46a"
+    },
+    {
+     "name": "Milk",
+     "color": "#f1f1f1"
+    }
+   ]
+  },
+  {
+   "id": "nike-vs-adidas",
+   "title": "Nike vs Adidas",
+   "question": "Who wins?",
+   "category": "lifestyle",
+   "tag": "#sneakers",
+   "sides": [
+    {
+     "name": "Nike",
+     "color": "#fa5400"
+    },
+    {
+     "name": "Adidas",
+     "color": "#3d7cff"
+    }
+   ]
+  }
+ ]
+}

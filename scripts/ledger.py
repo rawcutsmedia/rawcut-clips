@@ -116,21 +116,30 @@ def main():
                and r.get("due_at") and datetime.fromisoformat(r["due_at"]) <= now]
         print(json.dumps(due, indent=2))
     elif a.cmd == "summary":
-        queue, gta = [], []
+        queue, gta, idle = [], [], []
+        camps = json.loads((ROOT / "campaigns.json").read_text(encoding="utf-8"))["campaigns"]
         for p in sorted((ROOT / "queue").glob("*.mp4")):
             try:
-                kind = json.loads(p.with_suffix(".json").read_text(encoding="utf-8")).get("kind")
+                side = json.loads(p.with_suffix(".json").read_text(encoding="utf-8"))
             except Exception:
-                kind = None
-            (gta if kind == "stream" else queue).append(p.name)
+                side = {}
+            camp = camps.get(side.get("campaign"), {})
+            if not camp.get("active") or camp.get("paused"):
+                idle.append(p.name)      # its campaign is off: it won't be posted
+            elif side.get("kind") == "stream":
+                gta.append(p.name)
+            else:
+                queue.append(p.name)
         counts = {}
         for r in rows:
             counts[r.get("status")] = counts.get(r.get("status"), 0) + 1
         per_day = max(1, int(cfg.get("clips_per_day", 2)))
         gta_day = max(1, int(cfg.get("gta", {}).get("clips_per_night", 4)))
-        # queue_clips = stories (what the story factory tops up); GTA stream clips are counted apart
+        # queue_clips = postable videos of active campaigns (what the factory tops up);
+        # GTA stream clips are counted apart, clips of paused campaigns not at all
         print(json.dumps({"queue_clips": len(queue), "queue_days_left": round(len(queue) / per_day, 1),
                           "gta_queue_clips": len(gta), "gta_days_left": round(len(gta) / gta_day, 1),
+                          "clips_with_inactive_campaign": len(idle),
                           "post_status_counts": counts}, indent=2))
     elif a.cmd == "stats":
         camps = json.loads((ROOT / "campaigns.json").read_text(encoding="utf-8"))["campaigns"]

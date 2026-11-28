@@ -270,7 +270,7 @@
       "notes": "Delete fields you don't need. 'twitch' is the channel login the PC downloader uses. 'facecam' is X,Y,W,H in the source video (set by the GTA clip job the first time it sees the stream layout)."
     },
     "gta6-clix": {
-      "active": true,
+      "active": false,
       "name": "Clix GTA VI Marathon Pool ($5,000, Reach on Content Rewards)",
       "kind": "stream",
       "paid": true,
@@ -366,7 +366,57 @@
       ],
       "submit_within_minutes": 30,
       "min_total_views_to_count": 400000,
-      "facecam_note": "GTA marathon layout (seen 2026-11-19): webcam top-left, 1280x720 source. Earlier desk layout was [6,198,316,173]. Crop only the camera image, never overlays or logos."
+      "facecam_note": "GTA marathon layout (seen 2026-11-19): webcam top-left, 1280x720 source. Earlier desk layout was [6,198,316,173]. Crop only the camera image, never overlays or logos.",
+      "paused_note": "Paused 2026-11-27: the account switched to simulation battles (the laptop-based clipping job kept stalling and clips got 44-91 views). Set active true to resume."
+    },
+    "sim-battles": {
+      "active": true,
+      "kind": "sim",
+      "name": "Simulation battles & races (original, code-generated, no AI voice)",
+      "paid": false,
+      "platforms": [
+        "tiktok",
+        "youtube"
+      ],
+      "required_text": [],
+      "required_mentions": [],
+      "min_seconds": 12,
+      "max_seconds": 50,
+      "voiceover_allowed": false,
+      "caption_rules": [
+        "Line 1: a short take that makes people pick a side, 8 words or fewer, naming the sides (e.g. 'GTA 6 fans, this one's for you', 'Pineapple on pizza... the balls have spoken?'). A question is fine; begging for comments is not.",
+        "Never reveal who wins in the caption or title.",
+        "Friendly rivalry only: no insults, nothing about politics, religion, ethnic groups, wars or real individual people.",
+        "Say nothing false: the winner is decided by the physics, so never claim it's rigged, 'scientific' or predicted."
+      ],
+      "hashtags": {
+        "always": [
+          "#simulation"
+        ],
+        "core": [
+          "#satisfying",
+          "#ballsimulation",
+          "#oddlysatisfying",
+          "#physics",
+          "#ballbattle"
+        ],
+        "by_topic": {
+          "from the clip's sidecar": [
+            "use the sidecar's topic_tag (e.g. #gta6, #nfl, #countryballs)"
+          ]
+        },
+        "youtube_only": [
+          "#shorts"
+        ],
+        "avoid": [
+          "#fyp",
+          "#foryou",
+          "#viral",
+          "#ad"
+        ],
+        "researched": "2026-11-27"
+      },
+      "notes": "Fully automated in the cloud: tools/sim_maker.py renders original physics simulations with synthesized sound from sims/matchups.json. Winners are random (physics + seed). Income later from TikTok Creator Rewards / YouTube Partner Program once the account qualifies (Creator Rewards needs videos over 1 minute, so these short loops are for growth)."
     }
   }
 }

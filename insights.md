@@ -1,6 +1,18 @@
-# What's working (updated by the evening job; GTA section daily once there's data)
+# What's working (updated by the evening job; each section daily once there's data)
 
-## GTA clips (Clix GTA VI marathon on @mediarawcut, started Nov 18, 2026)
+## Simulations (sim-battles on @mediarawcut, started Nov 27, 2026)
+- No data of our own yet. Why this format (research, Nov 27): coded ball simulations are among the
+  few faceless formats still breaking out: @bbounce3000 (ball escapes) 52.7K followers, recent
+  videos ~7.8M views and ~69K shares each; @realsimball 45K followers from 47 videos. It's
+  hit-driven: one account with 220 videos has 547 followers, so concept and polish matter.
+- What we got before: stories ~190 views (viewers left at 8-18 s), Clix clips 44-91 views.
+- Starting rules until our numbers say otherwise:
+  1. Action from frame 1, short (15-35 s), the winner card at the end so the loop restarts.
+  2. Rivalries people argue about (GTA 6 vs GTA 5, rivalry games, pineapple pizza) over neutral ones.
+  3. Ride the week's news: topical matchups get priority (S2 in the factory job).
+  4. Run series (Round 2, 3...) on matchups that do well, so people follow for the rematch.
+
+## GTA clips (paused Nov 27, 2026; Clix GTA VI marathon on @mediarawcut, started Nov 18, 2026)
 - Night 1 (Nov 18, only 2 clips, so an early signal): ~46 views each; viewers left after ~5 seconds
   (18% of a 29 s clip, 26% of an 18 s clip). Until there's more data: the first second must show
   the action itself, and keep clips 10-20 s. Both hooks were plain statements; try questions/reactions.

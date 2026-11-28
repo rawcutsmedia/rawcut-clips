@@ -1,9 +1,11 @@
 # Rawcut Media: automated posting (instructions for Claude)
 
-This repo runs the Rawcut Media accounts. Since Oct 29, 2026 the content is **original scary
-stories**: an AI narrator over Minecraft parkour gameplay with big word-by-word captions, written
-and rendered automatically. Scheduled Claude runs (the "clip factory job", the "morning job" and the
-"evening job") follow this file exactly. They run unattended: don't ask questions, make the safe
+This repo runs the Rawcut Media accounts. Since Nov 27, 2026 the content is **original
+physics-simulation battles and races** (campaign `sim-battles`): rival sides as balls (GTA 6 vs
+GTA 5, sports rivalries, foods, friendly country rivalries) fighting or racing in code-drawn arenas
+with synthesized sound, made by `tools/sim_maker.py` entirely in the cloud. Viewers pick a side and
+the physics decides. Earlier formats (scary stories, Clix GTA clips) are paused. Scheduled Claude
+runs (the "clip factory job", the "morning job" and the "evening job") follow this file exactly. They run unattended: don't ask questions, make the safe
 choice, and report what you did in the final message and the email.
 
 ## Fixed facts
@@ -19,21 +21,45 @@ choice, and report what you did in the final message and the email.
   or the links won't exist.
 - `config.json` → `test_mode: true` means: create Buffer posts as **drafts** (`saveToDraft: true`)
   instead of scheduling them. Never change `test_mode` yourself.
-- `scary-stories` (not paid; no #ad) is **paused** since Nov 17, 2026 (`paused: true`): the
-  account is focusing on the Clix GTA VI campaign. `boxabl` is retired (`active: false`).
+- `sim-battles` (not paid; no #ad; `kind: "sim"`) is the **active** campaign since Nov 27, 2026.
+  The clip factory job makes the videos and the morning job posts them on TikTok and YouTube
+  Shorts. Nothing needs the user's laptop.
+- `scary-stories` (not paid; no #ad) is **paused** since Nov 17, 2026 (`paused: true`); its
+  finished videos are parked in `queue_paused/`. `boxabl` is retired (`active: false`).
 - GTA VI streamer campaigns (from contentrewards.com) are `gta6-<streamer>` entries with
-  `kind: "stream"` and `paid: true`; `gta6-template` shows the fields. Active now: `gta6-clix`
-  (Clix GTA VI marathon pool), posted on the main `@mediarawcut` TikTok by the **GTA clip job**
-  (evening), which also submits each link on Content Rewards. The morning job never posts them.
+  `kind: "stream"` and `paid: true`; `gta6-template` shows the fields. `gta6-clix` (Clix GTA VI
+  marathon pool) is **paused** since Nov 27, 2026 (`active: false`). The GTA clip job below only
+  applies while a `gta6-*` campaign is active. The morning job never posts stream clips.
 - Background gameplay lives in `assets/gameplay/` with credits in `assets/gameplay/credits.json`.
   It's free-to-use footage that requires credit. Never delete it.
 
-## Clip factory job (write and render story videos)
+## Clip factory job (make the videos)
 Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue/` (3 × 5 = 15).
-1. `git pull --rebase origin main`. If the `scary-stories` campaign has `paused: true` or
-   `active: false`, stop right away and say only "Stories are paused." Otherwise run
-   `python scripts/ledger.py summary`. need = target − `queue_clips`, at most
-   `factory.max_clips_per_run`. If need is 0, stop and say "Queue is full".
+1. `git pull --rebase origin main`, then `python scripts/ledger.py summary`. need = target −
+   `queue_clips`, at most `factory.max_clips_per_run`. If need is 0, stop and say "Queue is full".
+2. If `sim-battles` is active, make simulations (steps S1–S5). Otherwise, if `scary-stories` is
+   active and not paused, follow "Story factory" below. If neither, stop and say "No active
+   campaign to make videos for."
+
+S1. Set up: `pip install -q pygame-ce numpy imageio-ffmpeg`.
+S2. Learn first: read the `## Simulations` section of `insights.md`. When something big is
+    happening this week (a big game launch, rivalry games, a final, a holiday), add 1–3 topical
+    matchups to `sims/matchups.json` following its `_how_to_use` rules, with `priority` 2–3 so they
+    come up first, and drop the `priority` of ones that are no longer topical. Check facts with a
+    quick web search before adding a sports or news matchup (who actually plays this week).
+S3. Make them: `python tools/sim_maker.py auto --count <need>` (about 30 s each; it takes the least
+    recently used matchups and alternates battle/escape and categories). When insights say a format
+    or category wins, make up to half of them on purpose with
+    `python tools/sim_maker.py make --matchup <id> --format <battle|escape>`.
+    Never choose, re-roll or edit a seed to get a particular winner: the physics decides.
+S4. Quality check every new video: frames at 1 s, at half of the sidecar's `winner_at`, and at
+    `winner_at` + 1.5 s (`-ss <t> -i <video> -frames:v 1 <png>` with the imageio ffmpeg), and look
+    at them: title and question readable, balls and their names visible in the arena, winner card
+    readable. Delete a broken video and its `.json` and make a replacement.
+S5. `git add queue sims && git commit -m "Factory: <n> sims" && git push origin HEAD:main`.
+    Final message: videos added (title, format, length) and the queue total with days covered.
+
+### Story factory (only while `scary-stories` is active and not paused)
 2. Set up: `pip install -q kokoro-onnx==0.6.1 soundfile piper-tts imageio-ffmpeg numpy pillow` and
    `export CLIPKIT_WORK=$HOME/rawcut-work`. The narrator voice (Kokoro, set in `config.json` → `story`) downloads from GitHub on first use.
    Keep kokoro-onnx pinned to 0.6.1: story_maker uses its word timings.
@@ -98,6 +124,10 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
     `python scripts/ledger.py add --platform <p> --post-id <id> --due-at <dueAt> --media <media_path>
     --campaign <key> --title "<title>" --tags "<the hashtags used, space-separated>"
     --status <scheduled|draft|error> [--error "..."]`.
+    For simulation videos also add, from the sidecar, `--features '{"format": "<battle|escape>",
+    "category": "<category>", "matchup": "<matchup>", "sides": <number of sides>, "seconds":
+    <duration>, "post_time": "<HH:MM>", "caption_style": "<question|take>"}'` so the evening job can
+    learn what wins.
 12. `git add -A && git commit -m "Log posts <date>" && git push origin HEAD:main`.
 13. Final message: what was scheduled (platform, time, title), anything skipped and why, and how
     many clips are left in `queue/` (`python scripts/ledger.py summary`).
@@ -131,6 +161,16 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
   story title. YouTube description: 1–2 lines, then the credit, then the hashtags in this order:
   `#ad` first for paid campaigns only, then the campaign's `always` tags, a `core` tag, the rest,
   and `#shorts` last.
+- Simulation videos (`kind: "sim"`): short and made for picking a side. TikTok caption = one line
+  of 8 words or fewer that names the sides and invites a pick, then the hashtags. Alternate two
+  styles and record which one in the features: `question` ("GTA 6 or GTA 5, who's your pick?") and
+  `take` ("Pineapple on pizza is about to be settled 🍍"). Never reveal the winner, never claim the
+  result is rigged, predicted or "scientific", and keep it a friendly rivalry (campaign
+  `caption_rules`). Hashtags: `#simulation`, 1–2 rotated `core` tags, and the sidecar's `topic_tag`
+  (e.g. `#gta6`, `#nfl`, `#countryballs`); YouTube adds `#shorts` last. YouTube title:
+  "<sidecar title> | Ball Battle" for battles or "<sidecar title> | Escape Race" for escapes (90
+  characters max, no hashtags). `isAiGenerated` is false: the videos are drawn by code from
+  physics, with no AI imagery or voice. No credit line.
 - GTA stream clips: short and a little controversial, to get people arguing in the comments (the
   user's call, Nov 20). Start the caption with `#ad` (the disclosure must come first), then ONE
   brief hot take, 8 words or fewer and under 60 characters, saying GTA VI is way better than GTA V,
@@ -144,7 +184,7 @@ Goal: keep at least `factory.min_queue_days` × `clips_per_day` videos in `queue
   though other hashtags are lowercase), every `required_mentions` item and every `caption_rules`
   item. English only. No credit line. `isAiGenerated` is always false for stream clips.
 
-## GTA clip job (evening, uses the user's computer)
+## GTA clip job (evening, uses the user's computer; only while a `gta6-*` campaign is active)
 Downloads the streamers' most-viewed Twitch clips on the user's computer (Twitch is blocked in the
 cloud), edits them into vertical clips, posts them on the main `@mediarawcut` TikTok and submits
 each link on Content Rewards within 30 minutes. Runs unattended; the user does nothing.
@@ -300,7 +340,16 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
    - **Queue**: clips left and roughly how many days that covers. If fewer than 2 days are left,
      say so.
    - **Tomorrow**: scheduled posts.
-6. **Learn (every day, GTA clips):** run `python scripts/ledger.py learn --kind stream`. When it says
+6. **Learn (every day, simulations):** run `python scripts/ledger.py learn --kind sim`. When it says
+   `"enough_data": true` (8+ sim posts at least a day old), rewrite the `## Simulations` section of
+   `insights.md` (12 lines or fewer, leave other sections alone): what wins and loses by format,
+   category, matchup, number of sides, length, posting time, caption style and hashtag, with
+   average views, watched %, interaction rate and the post counts behind each (ignore buckets with
+   fewer than 3 posts); then 3–5 concrete rules for tomorrow's clip factory (which formats and
+   categories to make more of, which matchups to retire, one new kind of matchup to try). Only
+   state what the numbers show; before there's enough data, leave the section as is. Add one line
+   to the email: the single biggest lesson so far.
+   **GTA clips (only while a `gta6-*` campaign is active):** run `python scripts/ledger.py learn --kind stream`. When it says
    `"enough_data": true` (8+ GTA posts at least a day old), rewrite the `## GTA clips` section of
    `insights.md` (12 lines or fewer, leave other sections alone):
    - what wins and what loses by moment type, hook style, length, posting time and hashtag, with
@@ -311,7 +360,7 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
      should test next.
    Only state what the numbers show. Before there's enough data, leave the section as is.
    Add one line to the email: the single biggest lesson so far.
-7. **GTA top-up (keeps the 4-a-day minimum):** count today's GTA posts in the ledger (campaign
+7. **GTA top-up (only while a `gta6-*` campaign is active; keeps the 4-a-day minimum):** count today's GTA posts in the ledger (campaign
    `gta6-*`, `due_at` today). If fewer than `gta.min_posts_per_day` went out (for example the laptop
    was off) and stream clips wait in `queue/`, post the missing number now on `@mediarawcut`:
    `prepare_clip.py`, commit and push, `create_post` (first `dueAt` 5 minutes from now, then 10
@@ -350,5 +399,8 @@ each link on Content Rewards within 30 minutes. Runs unattended; the user does n
 - Never present a story as true, as a real Reddit post, or as about a real person.
 - Never delete or move files on the user's computer.
 - Never post a GTA clip for a streamer without an active `gta6-*` campaign for that streamer.
+- Never choose, re-roll or edit a simulation to get a particular winner, and never say a result was
+  rigged or predicted. Simulation matchups stay friendly rivalries: no wars or real conflicts,
+  politics, religion, ethnic groups or real individual people.
 - Never submit a story video (AI-narrated) to a streamer campaign, and never add AI voice or AI
   visuals to a stream clip: campaigns like Reach ban accounts for AI content.
