@@ -1,0 +1,24 @@
+{
+ "title": "Christmas vs Halloween: Which holiday wins?",
+ "campaign": "sim-battles",
+ "kind": "sim",
+ "format": "battle",
+ "matchup": "christmas-vs-halloween",
+ "category": "lifestyle",
+ "sides": [
+  "Christmas",
+  "Halloween"
+ ],
+ "winner": "Christmas",
+ "round": 1,
+ "series": {
+  "Christmas": 1
+ },
+ "seed": 884482299,
+ "duration": 35.88,
+ "winner_at": 33.08,
+ "topic_tag": "#christmas",
+ "ai_generated": false,
+ "credit": null,
+ "transcript": ""
+}

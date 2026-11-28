@@ -1,0 +1,24 @@
+{
+ "title": "iPhone vs Android: Settle it",
+ "campaign": "sim-battles",
+ "kind": "sim",
+ "format": "escape",
+ "matchup": "iphone-vs-android",
+ "category": "tech",
+ "sides": [
+  "iPhone",
+  "Android"
+ ],
+ "winner": "Android",
+ "round": 1,
+ "series": {
+  "Android": 1
+ },
+ "seed": 427518862,
+ "duration": 40.2,
+ "winner_at": 37.4,
+ "topic_tag": "#iphone",
+ "ai_generated": false,
+ "credit": null,
+ "transcript": ""
+}

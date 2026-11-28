@@ -1,0 +1,24 @@
+{
+ "title": "Cats vs Dogs: Who wins?",
+ "campaign": "sim-battles",
+ "kind": "sim",
+ "format": "battle",
+ "matchup": "cats-vs-dogs",
+ "category": "lifestyle",
+ "sides": [
+  "Cats",
+  "Dogs"
+ ],
+ "winner": "Dogs",
+ "round": 1,
+ "series": {
+  "Dogs": 1
+ },
+ "seed": 205665689,
+ "duration": 24.77,
+ "winner_at": 21.97,
+ "topic_tag": "#catsvsdogs",
+ "ai_generated": false,
+ "credit": null,
+ "transcript": ""
+}

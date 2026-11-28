@@ -1,0 +1,25 @@
+{
+ "title": "Fortnite vs Minecraft vs Roblox: Which game wins?",
+ "campaign": "sim-battles",
+ "kind": "sim",
+ "format": "escape",
+ "matchup": "fortnite-minecraft-roblox",
+ "category": "gaming",
+ "sides": [
+  "Fortnite",
+  "Minecraft",
+  "Roblox"
+ ],
+ "winner": "Minecraft",
+ "round": 1,
+ "series": {
+  "Minecraft": 1
+ },
+ "seed": 379156353,
+ "duration": 26.82,
+ "winner_at": 24.02,
+ "topic_tag": "#gaming",
+ "ai_generated": false,
+ "credit": null,
+ "transcript": ""
+}

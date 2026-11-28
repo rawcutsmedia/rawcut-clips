@@ -1,0 +1,62 @@
+{
+ "michigan-vs-ohio-state": {
+  "rounds": 1,
+  "wins": {
+   "Ohio State": 1
+  }
+ },
+ "gta6-vs-gta5": {
+  "rounds": 1,
+  "wins": {
+   "GTA 6": 1
+  }
+ },
+ "alabama-vs-auburn": {
+  "rounds": 1,
+  "wins": {
+   "Alabama": 1
+  }
+ },
+ "pineapple-pizza": {
+  "rounds": 1,
+  "wins": {
+   "YES": 1
+  }
+ },
+ "ps-xbox-nintendo": {
+  "rounds": 1,
+  "wins": {
+   "Nintendo": 1
+  }
+ },
+ "usa-canada-mexico": {
+  "rounds": 1,
+  "wins": {
+   "Mexico": 1
+  }
+ },
+ "cats-vs-dogs": {
+  "rounds": 1,
+  "wins": {
+   "Dogs": 1
+  }
+ },
+ "fortnite-minecraft-roblox": {
+  "rounds": 1,
+  "wins": {
+   "Minecraft": 1
+  }
+ },
+ "christmas-vs-halloween": {
+  "rounds": 1,
+  "wins": {
+   "Christmas": 1
+  }
+ },
+ "iphone-vs-android": {
+  "rounds": 1,
+  "wins": {
+   "Android": 1
+  }
+ }
+}

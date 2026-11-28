@@ -1,0 +1,25 @@
+{
+ "title": "USA vs Canada vs Mexico: Which country wins?",
+ "campaign": "sim-battles",
+ "kind": "sim",
+ "format": "escape",
+ "matchup": "usa-canada-mexico",
+ "category": "countries",
+ "sides": [
+  "USA",
+  "Canada",
+  "Mexico"
+ ],
+ "winner": "Mexico",
+ "round": 1,
+ "series": {
+  "Mexico": 1
+ },
+ "seed": 699264950,
+ "duration": 18.78,
+ "winner_at": 15.98,
+ "topic_tag": "#countryballs",
+ "ai_generated": false,
+ "credit": null,
+ "transcript": ""
+}
